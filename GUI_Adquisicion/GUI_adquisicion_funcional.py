@@ -343,7 +343,7 @@ class FrameCalibracion(wx.Frame):
             self, wx.ID_ANY, u"\n \n  \n \n ¿ Las herramientas ya han sido\n  calibradas en su totalidad  por \n el equipo de investigación? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(20, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
