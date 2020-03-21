@@ -24,6 +24,11 @@ from matplotlib.figure import Figure
 import time
 import wx.gizmos as gizmos
 from tkinter import *
+import sys
+
+import myo
+
+
 
 ###########################################################################
 # Class FrameMain
@@ -501,6 +506,11 @@ global i
 i = 0
 global c
 c = 0
+global t_eeg
+t_eeg = np.arange(0.0, 3.0, 0.01)
+
+global data_eeg
+data_eeg = np.sin(10 * np.pi * t_eeg)
 
 
 class FrameGesto1 (wx.Frame):
@@ -563,6 +573,7 @@ class FrameGesto1 (wx.Frame):
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
         bSizer51.Add(self.m_staticText31, 0, wx.ALL, 5)
 
+
         self.figure = Figure(figsize=(1, 2), dpi=80)
         self.axes = self.figure.add_subplot(111)
         t = np.arange(0.0, 3.0, 0.01)
@@ -583,14 +594,11 @@ class FrameGesto1 (wx.Frame):
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
         self.figure = Figure(figsize=(1, 2), dpi=80)
         self.axes = self.figure.add_subplot(111)
-        t = np.arange(0.0, 3.0, 0.01)
-        s = np.sin(2 * np.pi * t)
-        self.axes.plot(t, s)
+        self.axes.plot(t_eeg, data_eeg)
         self.canvas = FigureCanvas(self, -1, self.figure)
         bSizerEEG = wx.BoxSizer(wx.VERTICAL)
         bSizerEEG.Add(self.canvas, 1, wx.TOP | wx.LEFT | wx.EXPAND)
         bSizer49.Add(bSizerEEG, 1, wx.EXPAND, 5)
-
         bSizer53.Add(self.m_staticText32, 0, wx.ALL, 5)
 
         bSizer49.Add(bSizer53, 1, wx.EXPAND, 5)
@@ -650,12 +658,14 @@ class FrameGesto1 (wx.Frame):
 
     def OnClickSalir(self, event):
         self.Close()
+        sys.exit()
 
     def OnClickInicio(self, event):
         global i
         i = 0
         self.led.SetValue("0:00")
         self.OnTimer(None, e=10)
+        self.conexionMyo()
 
     def OnTimer(self, event, e):
         global i
@@ -675,6 +685,15 @@ class FrameGesto1 (wx.Frame):
         else:
             print("stop")
             self.timer.Stop()
+            listener = EmgCollector(512)
+            Plot(listener).main(0)
+
+    def conexionMyo(self):
+        myo.init()
+        hub = myo.Hub()
+        listener = EmgCollector(512)
+        with hub.run_in_background(listener.on_event):
+            Plot(listener).main(1)
 
     def TimerGo(self, event):
         global s
@@ -700,3 +719,65 @@ class FrameGesto1 (wx.Frame):
         print(t)
         self.led.SetValue(t)
         self.OnTimer(None , c)
+    
+### conexion Myo
+class EmgCollector(myo.DeviceListener):
+  """
+  Collects EMG data in a queue with *n* maximum number of elements.
+  """
+
+  def __init__(self, n):
+    self.n = n
+    self.lock = Lock()
+    self.emg_data_queue = deque(maxlen=n)
+
+  def get_emg_data(self):
+    with self.lock:
+      return list(self.emg_data_queue)
+
+  # myo.DeviceListener
+
+  def on_connected(self, event):
+    event.device.stream_emg(True)
+
+  def on_emg(self, event):
+    with self.lock:
+      self.emg_data_queue.append((event.timestamp, event.emg))
+
+class Plot(object):
+
+  def __init__(self, listener):
+    self.n = listener.n
+    self.listener = listener
+    self.fig = plt.figure()
+    self.axes = [self.fig.add_subplot('81' + str(i)) for i in range(1, 9)]
+    [(ax.set_ylim([-100, 100])) for ax in self.axes]
+    self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
+    plt.ion()
+
+  def update_plot(self):
+    # t_eeg = np.arange(0.0, 3.0, 0.01)
+    # data_eeg = np.sin(10 * np.pi * t_eeg)
+    # emg_data = self.listener.get_emg_data()
+    emg_data = self.listener.get_emg_data()
+    emg_data = np.array([x[1] for x in emg_data]).T
+    for g, data in zip(self.graphs, emg_data):
+      if len(data) < self.n:
+        # Fill the left side with zeroes.
+        data = np.concatenate([np.zeros(self.n - len(data)), data])
+      g.set_ydata(data)
+    plt.draw()
+
+  def main(self, closeGrap):
+    print("entro esto")
+    print(closeGrap)
+    print("entro esto")
+    if (closeGrap == 1):
+      self.update_plot()
+      plt.pause(1.0 / 30)
+    else:
+        print("entro esto final")
+        print(closeGrap)
+        matplotlib.pyplot.close("all")
+        # sys.exit()
+        return
