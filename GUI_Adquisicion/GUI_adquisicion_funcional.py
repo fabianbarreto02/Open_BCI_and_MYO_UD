@@ -135,7 +135,7 @@ class FrameObjetivos (wx.Frame):
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText3 = wx.StaticText(
-            self, wx.ID_ANY, u"\n Diseñar un modelo híbrido que relacione las  señales \n mioeléctrica y   las señales encefalográficas para la  \n identificación de gestos  comunes realizados por  un \n miembro superior. \n\n", wx.DefaultPosition, wx.Size(800, -1), 0)
+            self, wx.ID_ANY, u"\n Diseñar un modelo híbrido que relacione las  señales  mioeléctrica y   las señales encefalográficas para la  identificación de gestos  comunes realizados por  un  miembro superior. ", wx.DefaultPosition, wx.Size(800, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
             wx.Font(26, 70, 90, 90, False, wx.EmptyString))
@@ -148,7 +148,7 @@ class FrameObjetivos (wx.Frame):
             self, wx.ID_ANY, u"Objetivos Especificos", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_staticText4.Wrap(-1)
         self.m_staticText4.SetFont(
-            wx.Font(34, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(28, 70, 90, 90, False, wx.EmptyString))
 
         bSizer9.Add(self.m_staticText4, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -234,7 +234,7 @@ class FrameConsentimiento (wx.Frame):
 
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n Para continuar con el desarrollo del experimento es \n necesario  que usted, como participante lea \n cuidadosamente el consentimiento  informado \n previamente entregado por el equipo investigador, si \n tiene alguna duda o no entiende alguna palabra del \n consentiento por favor no dude en realizar todas las \n preguntas pertinente al equipo investigador.\n", wx.DefaultPosition, wx.Size(700, -1), 0)
+        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n Para continuar con el desarrollo del experimento es  necesario  que usted, como participante lea  cuidadosamente el consentimiento  informado  previamente entregado por el equipo investigador, si  tiene alguna duda o no entiende alguna palabra del consentiento por favor no dude en realizar todas las  preguntas pertinente al equipo investigador.", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
             wx.Font(26, 70, 90, 90, False, wx.EmptyString))
@@ -420,7 +420,7 @@ class FrameInstrucion (wx.Frame):
 
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n A continuación usted tendra que realizar una serie de \n gestos con o sin ayuda de elementos que le seran \n brindados por el equipo de investigación, por \n favor lea  con atención y realice el gesto lo mas \n parecido posible  a las imagenes de refencia, tendra \n que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.", wx.DefaultPosition, wx.Size(700, -1), 0)
+        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n A continuación usted tendra que realizar una serie de  gestos con o sin ayuda de elementos que le seran  brindados por el equipo de investigación, por  favor lea  con atención y realice el gesto lo mas  parecido posible  a las imagenes de refencia, tendra  que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
             wx.Font(26, 70, 90, 90, False, wx.EmptyString))
