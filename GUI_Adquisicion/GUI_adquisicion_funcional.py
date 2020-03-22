@@ -146,7 +146,7 @@ class FrameObjetivos (wx.Frame):
             self, wx.ID_ANY, u"\n Diseñar un modelo híbrido que relacione las  señales \n mioeléctrica y   las señales encefalográficas para la  \n identificación de gestos  comunes realizados por  un \n miembro superior. \n\n", wx.DefaultPosition, wx.Size(800, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -165,7 +165,7 @@ class FrameObjetivos (wx.Frame):
         self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"\n - Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. \n -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  \n - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   \n - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  \n encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con \n señales mioeléctricas. \n", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(22, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -245,7 +245,7 @@ class FrameConsentimiento (wx.Frame):
         self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n Para continuar con el desarrollo del experimento es \n necesario  que usted, como participante lea \n cuidadosamente el consentimiento  informado \n previamente entregado por el equipo investigador, si \n tiene alguna duda o no entiende alguna palabra del \n consentiento por favor no dude en realizar todas las \n preguntas pertinente al equipo investigador.\n", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -257,7 +257,7 @@ class FrameConsentimiento (wx.Frame):
             self, wx.ID_ANY, u"\n \n ¿ Ha leido y comprendido en\n  su totalidad el consentimiento \n informado dado con  anterioridad ? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -339,7 +339,7 @@ class FrameCalibracion(wx.Frame):
             self, wx.ID_ANY, u"\n En esta etapa del proceso el equipo investigador \n procedera a realizar la calibración de la herramienta \n UltraCortex (casco) y la herramienta MYO (brazalete)", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -351,7 +351,7 @@ class FrameCalibracion(wx.Frame):
             self, wx.ID_ANY, u"\n \n  \n \n ¿ Las herramientas ya han sido\n  calibradas en su totalidad  por \n el equipo de investigación? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(4, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -431,7 +431,7 @@ class FrameInstrucion (wx.Frame):
         self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n A continuación usted tendra que realizar una serie de \n gestos con o sin ayuda de elementos que le seran \n brindados por el equipo de investigación, por \n favor lea  con atención y realice el gesto lo mas \n parecido posible  a las imagenes de refencia, tendra \n que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(6, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -443,7 +443,7 @@ class FrameInstrucion (wx.Frame):
             self, wx.ID_ANY, u"\n  ¿ Esta de acuerdo con seguir las\n  instruciones definidas por el \n equipo de investigación? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(4, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -667,7 +667,7 @@ class FrameGesto1 (wx.Frame):
         global i
         global procesoEMG
         i = 0
-        procesoEMG = subprocess.Popen("python3 MYO_conexion.py", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
+        procesoEMG = subprocess.Popen("python MYO_conexion.py", shell=True)
         self.led.SetValue("0:00")
         self.OnTimer(None, e=10)
         
