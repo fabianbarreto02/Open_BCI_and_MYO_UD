@@ -26,7 +26,6 @@ import wx.gizmos as gizmos
 from tkinter import *
 import sys
 
-import myo
 import subprocess
 import os
 from MYO_conexion import *
@@ -666,8 +665,10 @@ class FrameGesto1 (wx.Frame):
     def OnClickInicio(self, event):
         global i
         global procesoEMG
+        global procesoEEG
         i = 0
         procesoEMG = subprocess.Popen("python MYO_conexion.py", shell=True)
+        procesoEEG = subprocess.Popen("python ULTRACORTEX_conexion.py", shell= True)
         self.led.SetValue("0:00")
         self.OnTimer(None, e=10)
         
