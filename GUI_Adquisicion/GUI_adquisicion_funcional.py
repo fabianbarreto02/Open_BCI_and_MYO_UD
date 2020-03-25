@@ -621,7 +621,7 @@ class FrameGesto1 (wx.Frame):
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
         bSizer8.Add(self.m_staticText33, 0, wx.ALL, 5)
         pos = wx.DefaultPosition
-        size = wx.Size(1, 10)
+        size = wx.Size(1, 11)
         style = gizmos.LED_ALIGN_CENTER
         self.led = gizmos.LEDNumberCtrl(self, -1, pos, size, style)
         self.led.SetBackgroundColour("white")
