@@ -476,7 +476,7 @@
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="0">
                             <property name="border">0</property>
-                            <property name="flag">wxALIGN_CENTER_HORIZONTAL</property>
+                            <property name="flag">wxALIGN_BOTTOM|wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT|wxALIGN_TOP|wxALL|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="0">
                                 <property name="bg"></property>
@@ -487,13 +487,13 @@
                                 <property name="font">,90,90,26,70,0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">&#x0A; Diseñar un modelo híbrido que relacione las  señales &#x0A; mioeléctrica y   las señales encefalográficas para la  &#x0A; identificación de gestos  comunes realizados por  un &#x0A; miembro superior. &#x0A;&#x0A;</property>
+                                <property name="label">Diseñar un modelo híbrido que relacione las  señales  mioeléctrica y   las señales encefalográficas para la   identificación de gestos  comunes realizados por  un  miembro superior. </property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText3</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
-                                <property name="size">800,-1</property>
+                                <property name="size">800,160</property>
                                 <property name="style"></property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
@@ -558,7 +558,7 @@
                                         <property name="name">m_staticText4</property>
                                         <property name="permission">protected</property>
                                         <property name="pos"></property>
-                                        <property name="size"></property>
+                                        <property name="size">-1,111</property>
                                         <property name="style"></property>
                                         <property name="subclass"></property>
                                         <property name="tooltip"></property>
@@ -605,8 +605,8 @@
                                         <property name="orient">wxVERTICAL</property>
                                         <property name="permission">none</property>
                                         <object class="sizeritem" expanded="0">
-                                            <property name="border">5</property>
-                                            <property name="flag">wxALIGN_CENTER_HORIZONTAL</property>
+                                            <property name="border">0</property>
+                                            <property name="flag">wxALIGN_BOTTOM|wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL|wxALIGN_TOP|wxALL|wxBOTTOM|wxFIXED_MINSIZE|wxLEFT|wxRIGHT|wxSHAPED|wxTOP</property>
                                             <property name="proportion">0</property>
                                             <object class="wxStaticText" expanded="0">
                                                 <property name="bg"></property>
@@ -617,13 +617,13 @@
                                                 <property name="font">,90,90,22,70,0</property>
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
-                                                <property name="label">&#x0A; - Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. &#x0A; -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  &#x0A; - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   &#x0A; - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  &#x0A; encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con &#x0A; señales mioeléctricas. &#x0A;</property>
+                                                <property name="label">- Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. &#x0A; -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  &#x0A; - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   &#x0A; - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con señales mioeléctricas. </property>
                                                 <property name="maximum_size"></property>
                                                 <property name="minimum_size"></property>
                                                 <property name="name">m_staticText5</property>
                                                 <property name="permission">protected</property>
-                                                <property name="pos"></property>
-                                                <property name="size"></property>
+                                                <property name="pos">-1,-1</property>
+                                                <property name="size">1300,380</property>
                                                 <property name="style"></property>
                                                 <property name="subclass"></property>
                                                 <property name="tooltip"></property>
@@ -923,7 +923,7 @@
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="0">
                             <property name="border">0</property>
-                            <property name="flag">wxALIGN_CENTER_HORIZONTAL</property>
+                            <property name="flag">wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="0">
                                 <property name="bg"></property>
@@ -934,13 +934,13 @@
                                 <property name="font">,90,90,26,70,0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">&#x0A; Para continuar con el desarrollo del experimento es &#x0A; necesario  que usted, como participante lea &#x0A; cuidadosamente el consentimiento  informado &#x0A; previamente entregado por el equipo investigador, si &#x0A; tiene alguna duda o no entiende alguna palabra del &#x0A; consentiento por favor no dude en realizar todas las &#x0A; preguntas pertinente al equipo investigador.&#x0A;</property>
+                                <property name="label">Para continuar con el desarrollo del experimento es necesario  que usted, como participante lea cuidadosamente el consentimiento  informado previamente entregado por el equipo investigador, si tiene alguna duda o no entiende alguna palabra del consentiento por favor no dude en realizar todas las preguntas pertinente al equipo investigador.</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText3</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
-                                <property name="size">700,-1</property>
+                                <property name="size">720,270</property>
                                 <property name="style"></property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
@@ -1008,13 +1008,13 @@
                                                 <property name="font">,90,90,24,70,0</property>
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
-                                                <property name="label">&#x0A; &#x0A; ¿ Ha leido y comprendido en&#x0A;  su totalidad el consentimiento &#x0A; informado dado con  anterioridad ? &#x0A;</property>
+                                                <property name="label">¿ Ha leido y comprendido en su totalidad el consentimiento informado dado con  anterioridad ? </property>
                                                 <property name="maximum_size"></property>
                                                 <property name="minimum_size"></property>
                                                 <property name="name">m_staticText5</property>
                                                 <property name="permission">protected</property>
                                                 <property name="pos"></property>
-                                                <property name="size">400,-1</property>
+                                                <property name="size">400,150</property>
                                                 <property name="style"></property>
                                                 <property name="subclass"></property>
                                                 <property name="tooltip"></property>
@@ -1266,7 +1266,7 @@
                         <property name="name">m_staticText2</property>
                         <property name="permission">protected</property>
                         <property name="pos"></property>
-                        <property name="size"></property>
+                        <property name="size">-1,80</property>
                         <property name="style"></property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
@@ -1325,13 +1325,13 @@
                                 <property name="font">,90,90,26,70,0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">&#x0A; En esta etapa del proceso el equipo investigador &#x0A; procedera a realizar la calibración de la herramienta &#x0A; UltraCortex (casco) y la herramienta MYO (brazalete)</property>
+                                <property name="label">En esta etapa del proceso el equipo investigador procedera a realizar la calibración de la herramienta  UltraCortex (casco) y la herramienta MYO (brazalete).</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText3</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
-                                <property name="size">700,-1</property>
+                                <property name="size">700,200</property>
                                 <property name="style"></property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
@@ -1399,13 +1399,13 @@
                                                 <property name="font">,90,90,24,70,0</property>
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
-                                                <property name="label">&#x0A; &#x0A;  &#x0A; &#x0A; ¿ Las herramientas ya han sido&#x0A;  calibradas en su totalidad  por &#x0A; el equipo de investigación? &#x0A;</property>
+                                                <property name="label">¿ Las herramientas ya han sido  calibradas en su totalidad  por el equipo de investigación? </property>
                                                 <property name="maximum_size"></property>
                                                 <property name="minimum_size"></property>
                                                 <property name="name">m_staticText5</property>
                                                 <property name="permission">protected</property>
                                                 <property name="pos"></property>
-                                                <property name="size">400,-1</property>
+                                                <property name="size">400,130</property>
                                                 <property name="style"></property>
                                                 <property name="subclass"></property>
                                                 <property name="tooltip"></property>
@@ -1657,7 +1657,7 @@
                         <property name="name">m_staticText2</property>
                         <property name="permission">protected</property>
                         <property name="pos"></property>
-                        <property name="size"></property>
+                        <property name="size">-1,60</property>
                         <property name="style"></property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
@@ -1716,13 +1716,13 @@
                                 <property name="font">,90,90,26,70,0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">&#x0A; A continuación usted tendra que realizar una serie de &#x0A; gestos con o sin ayuda de elementos que le seran &#x0A; brindados por el equipo de investigación, por &#x0A; favor lea  con atención y realice el gesto lo mas &#x0A; parecido posible  a las imagenes de refencia, tendra &#x0A; que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.</property>
+                                <property name="label">A continuación usted tendra que realizar una serie de gestos con o sin ayuda de elementos que le seran brindados por el equipo de investigación, por favor lea  con atención y realice el gesto lo mas parecido posible  a las imagenes de refencia, tendra que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText3</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
-                                <property name="size">700,-1</property>
+                                <property name="size">700,280</property>
                                 <property name="style"></property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
@@ -1790,13 +1790,13 @@
                                                 <property name="font">,90,90,24,70,0</property>
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
-                                                <property name="label">&#x0A;  ¿ Esta de acuerdo con seguir las&#x0A;  instruciones definidas por el &#x0A; equipo de investigación? &#x0A;</property>
+                                                <property name="label">¿ Esta de acuerdo con seguir las instruciones definidas por el equipo de investigación? </property>
                                                 <property name="maximum_size"></property>
                                                 <property name="minimum_size"></property>
                                                 <property name="name">m_staticText5</property>
                                                 <property name="permission">protected</property>
                                                 <property name="pos"></property>
-                                                <property name="size">400,-1</property>
+                                                <property name="size">400,120</property>
                                                 <property name="style"></property>
                                                 <property name="subclass"></property>
                                                 <property name="tooltip"></property>
