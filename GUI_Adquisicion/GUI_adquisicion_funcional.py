@@ -25,6 +25,8 @@ import time
 import wx.gizmos as gizmos
 from tkinter import *
 import sys
+import matplotlib.animation as manim
+
 
 import subprocess
 import os
@@ -522,14 +524,18 @@ data_eeg = np.sin(10 * np.pi * t_eeg)
 
 
 class FrameGesto1 (wx.Frame):
+
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Captura de señales para el gesto 1",
-                          pos=wx.DefaultPosition, size=wx.Size(1400, 850), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          pos=wx.DefaultPosition, size=wx.Size(1400, 800), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
 
         bSizer4 = wx.BoxSizer(wx.VERTICAL)
+        self.panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
+        self.panel.SetSizer(sizer)
         self.m_staticText2 = wx.StaticText(
             self, wx.ID_ANY, u"Captura de señales para el primer gesto \n", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText2.Wrap(-1)
@@ -564,7 +570,8 @@ class FrameGesto1 (wx.Frame):
 
         self.m_animCtrl1 = AnimationCtrl(self, pos=(
             40, 40), size=(24, 24), name="AnimationCtrl")
-        self.m_animCtrl1.LoadFile(u"/Users/macfabian/Documents/Desarrollo Tesis/GUI_Adquisicion/manos.gif")
+        self.m_animCtrl1.LoadFile(
+            u"/Users/macfabian/Documents/Desarrollo Tesis/GUI_Adquisicion/manos.gif")
         self.m_animCtrl1.Play()
         self.m_animCtrl1.SetMinSize(wx.Size(200, -1))
 
@@ -573,43 +580,62 @@ class FrameGesto1 (wx.Frame):
         bSizer49.Add(bSizer50, 1, 0, 5)
 
         bSizer51 = wx.BoxSizer(wx.VERTICAL)
+        bSizer57 = wx.BoxSizer(wx.HORIZONTAL)
+
+        # grafica EMG
+        self.figureEMG = Figure(figsize=(1, 7), dpi=60)
+        self.ax = self.figureEMG.add_subplot(811)
+        self.ax1 = self.figureEMG.add_subplot(812)
+        self.ax2 = self.figureEMG.add_subplot(813)
+        self.ax3 = self.figureEMG.add_subplot(814)
+        self.ax4 = self.figureEMG.add_subplot(815)
+        self.ax5 = self.figureEMG.add_subplot(816)
+        self.ax6 = self.figureEMG.add_subplot(817)
+        self.ax7 = self.figureEMG.add_subplot(818)
+        self.ax1.plot(t_eeg, data_eeg)
+        self.ax7.plot(t_eeg, data_eeg)
+        self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
+        self.values = []
+        self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
+        bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
+
+        # grafica EEG
+        self.figure = Figure(figsize=(1, 2), dpi=80)
+        self.axes = self.figure.add_subplot(811)
+        self.axes = self.figure.add_subplot(812)
+        self.axes = self.figure.add_subplot(813)
+        self.axes = self.figure.add_subplot(814)
+        self.axes = self.figure.add_subplot(815)
+        self.axes = self.figure.add_subplot(816)
+        self.axes = self.figure.add_subplot(817)
+        self.axes = self.figure.add_subplot(818)
+        self.axes.plot(t_eeg, data_eeg)
+        self.canvasEEG = FigureCanvas(self, -1, self.figure)
+        bSizer57.Add(self.canvasEEG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
+
+        bSizer51.Add(bSizer57, 1, wx.EXPAND, 5)
+
+        bSizer49.Add(bSizer51, 1, wx.EXPAND, 5)
+
+        bSizer53 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_staticText31 = wx.StaticText(
-            self, wx.ID_ANY, u"Señal EMG", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Señal EMG", wx.DefaultPosition, wx.Size(700, 30), 0)
         self.m_staticText31.Wrap(-1)
         self.m_staticText31.SetFont(
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
-        bSizer51.Add(self.m_staticText31, 0, wx.ALL, 5)
 
-        self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axes = self.figure.add_subplot(111)
-        t = np.arange(0.0, 3.0, 0.01)
-        s = np.sin(2 * np.pi * t)
-        self.axes.plot(t, s)
-        self.canvas = FigureCanvas(self, -1, self.figure)
-        bSizerEMG = wx.BoxSizer(wx.VERTICAL)
-        bSizerEMG.SetMinSize( wx.Size( -1,130 ) ) 
-        bSizerEMG.Add(self.canvas, 1, wx.TOP | wx.LEFT | wx.EXPAND)
-        bSizer49.Add(bSizerEMG, 1, wx.EXPAND, 5)
-        bSizer49.Add(bSizer51, 1, wx.EXPAND, 5)
-
-        bSizer53 = wx.BoxSizer(wx.VERTICAL)
+        bSizer53.Add(self.m_staticText31, 0, wx.LEFT, 5)
 
         self.m_staticText32 = wx.StaticText(
-            self, wx.ID_ANY, u"Señal EEG", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Señal EEG", wx.DefaultPosition, wx.Size(-1, 30), 0)
         self.m_staticText32.Wrap(-1)
         self.m_staticText32.SetFont(
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
-        self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axes = self.figure.add_subplot(111)
-        self.axes.plot(t_eeg, data_eeg)
-        self.canvas = FigureCanvas(self, -1, self.figure)
-        bSizerEEG = wx.BoxSizer(wx.VERTICAL)
-        bSizerEEG.Add(self.canvas, 1, wx.TOP | wx.LEFT | wx.EXPAND)
-        bSizer49.Add(bSizerEEG, 1, wx.EXPAND, 5)
-        bSizer53.Add(self.m_staticText32, 0, wx.ALL, 5)
 
-        bSizer49.Add(bSizer53, 1, wx.EXPAND, 5)
+        bSizer53.Add(self.m_staticText32, 0, 0, 5)
+
+        bSizer49.Add(bSizer53, 1, 0, 5)
 
         bSizer8 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -652,6 +678,7 @@ class FrameGesto1 (wx.Frame):
 
         self.Centre(wx.BOTH)
 
+
         # Connect Events
         self.m_button32.Bind(wx.EVT_BUTTON, self.OnClickInicio)
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
@@ -660,7 +687,10 @@ class FrameGesto1 (wx.Frame):
     def __del__(self):
         pass
 
-    # Virtual event handlers, overide them in your derived class
+# Virtual event handlers, overide them in your derived class
+    def OnClickInicio(self, event):
+        self.GetSegundos(None)
+
     def OnClickConcentimiento(self, event):
         event.Skip()
 
@@ -668,15 +698,27 @@ class FrameGesto1 (wx.Frame):
         self.Close()
         sys.exit()
 
-    def OnClickInicio(self, event):
-        global i
-        global procesoEMG
-        global procesoEEG
-        i = 0
-        procesoEMG = subprocess.Popen("python3 MYO_conexion.py", shell=True)
-        procesoEEG = subprocess.Popen("python3 ULTRACORTEX_conexion.py", shell= True)
-        self.led.SetValue("0:00")
-        self.OnTimer(None, e=10)
+    # Metodos Plot
+    def anim(self,i):
+        if i%10 == 0:
+            self.values = []
+        else:
+            self.values.append(np.random.rand())
+        self.ax.clear()
+        self.ax.set_xlim([0,10])
+        self.ax.set_ylim([0,1])        
+        return self.ax.plot(np.arange(1,i%10+1),self.values,'d-')
+    
+    def GetSegundos(self, e):
+        global segundos
+        dlg = wx.TextEntryDialog(self.panel, 'Ingrese los segundos a grabar el gesto:',"Captura del gesto","", 
+                style=wx.OK)
+        dlg.ShowModal()
+        segundos = int(dlg.GetValue())
+        print(segundos)
+        # self.txt.SetValue(dlg.GetValue())
+        self.OnTimer(None, e=segundos)
+        dlg.Destroy()
 
     def OnTimer(self, event, e):
         global procesoEMG
@@ -690,7 +732,7 @@ class FrameGesto1 (wx.Frame):
             self.Bind(wx.EVT_TIMER, self.TimerGo)
         else:
             self.timer.Stop()
-            os.killpg(os.getpgid(procesoEMG.pid), signal.SIGTERM)
+            # os.killpg(os.getpgid(procesoEMG.pid), signal.SIGTERM)
 
     def TimerGo(self, event):
         global s
@@ -714,3 +756,5 @@ class FrameGesto1 (wx.Frame):
         t = str(m) + ":" + str(s)
         self.led.SetValue(t)
         self.OnTimer(None, c)
+
+    
