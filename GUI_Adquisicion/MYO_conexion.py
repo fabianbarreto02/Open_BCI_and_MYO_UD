@@ -47,12 +47,22 @@ class Plot(object):
 
   def update_plot(self):
     emg_data = self.listener.get_emg_data()
+    print("data puro")
+    print(emg_data)
     emg_data = np.array([x[1] for x in emg_data]).T
+    print("Secont data")
+    print(emg_data)
+    # for separa los 8 canales del emg
     for g, data in zip(self.graphs, emg_data):
       if len(data) < self.n:
         # Fill the left side with zeroes.
         data = np.concatenate([np.zeros(self.n - len(data)), data])
+        print("Dato if")
+        print(data)
       g.set_ydata(data)
+      print("Dato canal")
+      print(g)
+      print(data)
     plt.draw()
 
   def main(self):

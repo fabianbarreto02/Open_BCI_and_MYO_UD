@@ -26,7 +26,6 @@ import wx.gizmos as gizmos
 from tkinter import *
 import sys
 
-import myo
 import subprocess
 import os
 from MYO_conexion import *
@@ -165,7 +164,7 @@ class FrameObjetivos (wx.Frame):
 
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"\n - Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. \n -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  \n - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   \n - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con señales mioeléctricas. ", wx.Point(-1, -1), wx.Size(1300, 300), 0)
+        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"- Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. \n -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  \n - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   \n - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con señales mioeléctricas. ", wx.Point(-1, -1), wx.Size(1300, 300), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
             wx.Font(22, 70, 90, 90, False, wx.EmptyString))
@@ -342,7 +341,7 @@ class FrameCalibracion(wx.Frame):
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText3 = wx.StaticText(
-            self, wx.ID_ANY, u"En esta etapa del proceso el equipo investigador procedera a realizar la calibración de la herramienta  UltraCortex (casco) y la herramienta MYO (brazalete).", wx.DefaultPosition, wx.Size(700, 200), 0)
+            self, wx.ID_ANY, u"En esta etapa del proceso el equipo investigador procedera a realizar la calibración de la herramienta  UltraCortex (casco) y la herramienta MYO (brazalete).", wx.DefaultPosition, wx.Size(700, 280), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
             wx.Font(26, 70, 90, 90, False, wx.EmptyString))
@@ -354,7 +353,7 @@ class FrameCalibracion(wx.Frame):
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText5 = wx.StaticText(
-            self, wx.ID_ANY, u"¿ Las herramientas ya han sido  calibradas en su totalidad  por el equipo de investigación? ", wx.DefaultPosition, wx.Size(400, 130), 0)
+            self, wx.ID_ANY, u"¿ Las herramientas ya han sido  calibradas en su totalidad  por el equipo de investigación? ", wx.DefaultPosition, wx.Size(400, 100), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
             wx.Font(24, 70, 90, 90, False, wx.EmptyString))
@@ -672,9 +671,10 @@ class FrameGesto1 (wx.Frame):
     def OnClickInicio(self, event):
         global i
         global procesoEMG
+        global procesoEEG
         i = 0
-        procesoEMG = subprocess.Popen(
-            "python3 MYO_conexion.py", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
+        procesoEMG = subprocess.Popen("python3 MYO_conexion.py", shell=True)
+        procesoEEG = subprocess.Popen("python3 ULTRACORTEX_conexion.py", shell= True)
         self.led.SetValue("0:00")
         self.OnTimer(None, e=10)
 
@@ -683,19 +683,12 @@ class FrameGesto1 (wx.Frame):
         global i
         global c
         c = e
-        print("entro On Timmer c")
-        print(c)
-        print("ojo i")
-        print(i)
         if(i < c):
-            print("entro if")
-            print(i)
             i += 1
             self.timer = wx.Timer(self, -1)
             self.timer.Start(1000)
             self.Bind(wx.EVT_TIMER, self.TimerGo)
         else:
-            print("stop")
             self.timer.Stop()
             os.killpg(os.getpgid(procesoEMG.pid), signal.SIGTERM)
 
@@ -719,7 +712,5 @@ class FrameGesto1 (wx.Frame):
         if(int(s) > 9):
             s = str(s)
         t = str(m) + ":" + str(s)
-        print("Timmer")
-        print(t)
         self.led.SetValue(t)
         self.OnTimer(None, c)
