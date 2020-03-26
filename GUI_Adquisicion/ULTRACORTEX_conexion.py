@@ -14,10 +14,9 @@ import threading
 import time
 import numpy as np
 from scipy import signal
-
 from pyOpenBCI import OpenBCICyton
 
-
+pg.setConfigOption('background','w')# set white background
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
 colors = 'rgbycmwr'
 
