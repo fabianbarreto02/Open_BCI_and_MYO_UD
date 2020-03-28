@@ -589,6 +589,7 @@ class FrameGesto1 (wx.Frame):
         self.axes = [self.figureEMG.add_subplot('81' + str(i)) for i in range(1, 9)]
         [(ax.set_ylim([-100, 100])) for ax in self.axes]
         self.n = 512
+        global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
         plt.ion()
         # self.ax1.plot(t_eeg, data_eeg)
@@ -772,18 +773,19 @@ class FrameGesto1 (wx.Frame):
         self.OnTimer(None, c)
     
     def mainMYO(self, i):
+        global graphs
         print("main")
         myo.init()
         hub = myo.Hub()
-        listener = EmgCollector(512)
-        with hub.run_in_background(listener.on_event):
+        self.listener = EmgCollector(512)
+        with hub.run_in_background(self.listener.on_event):
             contador = 0
             while i == 0:
                 print("funcion")
-                time.sleep(0.1)
+                time.sleep(0.4)
                 print("Update")
                 data_total= []
-                emg_data = EmgCollector(512).get_emg_data()
+                emg_data = self.listener.get_emg_data()
                 print(emg_data)
                 emg_data = np.array([x[1] for x in emg_data]).T
                 print("Transpue datos organizado vector fila")
@@ -816,6 +818,7 @@ class EmgCollector(myo.DeviceListener):
     self.n = n
     self.lock = Lock()
     self.emg_data_queue = deque(maxlen=n)
+    print("ojooooooo EM")
     print(self.n)
 
   def get_emg_data(self):
