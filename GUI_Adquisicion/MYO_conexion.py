@@ -42,6 +42,7 @@ class Plot(object):
   def __init__(self, listener):
     print("init plot")
     self.n = listener.n
+    print(self.n)
     self.listener = listener
     self.fig = plt.figure()
     self.axes = [self.fig.add_subplot('81' + str(i)) for i in range(1, 9)]

@@ -1,17 +1,21 @@
 import threading
+import time
 
-def contar():
-    '''Contar hasta cien'''
-    contador = 0
-    while contador<100:
-        contador+=1
-        print('Hilo:', 
-              threading.current_thread().getName(), 
-              'con identificador:', 
-              threading.current_thread().ident,
-              'Contador:', contador)
 
-hilo1 = threading.Thread(target=contar)
-hilo2 = threading.Thread(target=contar)
-hilo1.start()
-hilo2.start()
+def doit(arg):
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
+        print ("working on %s" % arg)
+        time.sleep(1)
+    print("Stopping as you wish.")
+
+
+def main():
+    t = threading.Thread(target=doit, args=("task",))
+    t.start()
+    time.sleep(5)
+    t.do_run = False
+    t.join()
+
+if __name__ == "__main__":
+    main()

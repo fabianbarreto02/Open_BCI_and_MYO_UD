@@ -586,19 +586,16 @@ class FrameGesto1 (wx.Frame):
 
         # grafica EMG
         self.figureEMG = Figure(figsize=(1, 7), dpi=60)
-        self.ax = self.figureEMG.add_subplot(811)
-        self.ax1 = self.figureEMG.add_subplot(812)
-        self.ax2 = self.figureEMG.add_subplot(813)
-        self.ax3 = self.figureEMG.add_subplot(814)
-        self.ax4 = self.figureEMG.add_subplot(815)
-        self.ax5 = self.figureEMG.add_subplot(816)
-        self.ax6 = self.figureEMG.add_subplot(817)
-        self.ax7 = self.figureEMG.add_subplot(818)
-        self.ax1.plot(t_eeg, data_eeg)
-        self.ax7.plot(t_eeg, data_eeg)
+        self.axes = [self.figureEMG.add_subplot('81' + str(i)) for i in range(1, 9)]
+        [(ax.set_ylim([-100, 100])) for ax in self.axes]
+        self.n = 512
+        self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
+        plt.ion()
+        # self.ax1.plot(t_eeg, data_eeg)
+        # self.ax7.plot(t_eeg, data_eeg)
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
         self.values = []
-        self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
+        # self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
@@ -611,7 +608,7 @@ class FrameGesto1 (wx.Frame):
         self.axes = self.figure.add_subplot(816)
         self.axes = self.figure.add_subplot(817)
         self.axes = self.figure.add_subplot(818)
-        self.axes.plot(t_eeg, data_eeg)
+        # self.axes.plot(t_eeg, data_eeg)
         self.canvasEEG = FigureCanvas(self, -1, self.figure)
         bSizer57.Add(self.canvasEEG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
@@ -687,10 +684,16 @@ class FrameGesto1 (wx.Frame):
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
         # self.mainMYO()
-        
-        def prueba():
-            self.mainMYO()
-        hilo1 = threading.Thread(target=prueba)
+        global hilo1
+        def prueba(arg):
+            hilo1 = threading.currentThread()
+            while getattr(hilo1, "do_run", True):
+                print("working on %s" % arg)
+                self.mainMYO(i=0)
+                # time.sleep(1)
+            print("Stopping as you wish.")
+
+        hilo1 = threading.Thread(target=prueba,args=("MYO",))
         hilo1.start()
 
     def __del__(self):
@@ -733,6 +736,7 @@ class FrameGesto1 (wx.Frame):
         global procesoEMG
         global i
         global c
+        global hilo1
         c = e
         if(i < c):
             i += 1
@@ -741,7 +745,8 @@ class FrameGesto1 (wx.Frame):
             self.Bind(wx.EVT_TIMER, self.TimerGo)
         else:
             self.timer.Stop()
-            # os.killpg(os.getpgid(procesoEMG.pid), signal.SIGTERM)
+            # hilo1.do_run = False
+            # hilo1.join()
 
     def TimerGo(self, event):
         global s
@@ -766,13 +771,39 @@ class FrameGesto1 (wx.Frame):
         self.led.SetValue(t)
         self.OnTimer(None, c)
     
-    def mainMYO(self):
+    def mainMYO(self, i):
         print("main")
         myo.init()
         hub = myo.Hub()
         listener = EmgCollector(512)
-        time.sleep(5)
-        Plot(listener).main()
+        with hub.run_in_background(listener.on_event):
+            contador = 0
+            while i == 0:
+                print("funcion")
+                time.sleep(0.1)
+                print("Update")
+                data_total= []
+                emg_data = EmgCollector(512).get_emg_data()
+                print(emg_data)
+                emg_data = np.array([x[1] for x in emg_data]).T
+                print("Transpue datos organizado vector fila")
+                print(len(emg_data))
+                print(emg_data)
+                contador = contador + 1
+                print("ojooooooooooooooooooooooo")
+                print(contador)
+                for g, data in zip(self.graphs, emg_data):
+                    if len(data) < self.n:
+                        # Fill the left side with zeroes.
+                        data = np.concatenate([np.zeros(self.n - len(data)), data])
+                    g.set_ydata(data)
+                    print(data)
+                    data_total.append(data)
+                    print(len(data))
+                print("data total")
+                print(data_total)
+                plt.draw()
+                                    
     
     
 
@@ -800,42 +831,3 @@ class EmgCollector(myo.DeviceListener):
     with self.lock:
       self.emg_data_queue.append((event.timestamp, event.emg))
 
-class Plot(object):
-
-  def __init__(self, listener):
-    print("init plot")
-    self.n = listener.n
-    self.listener = listener
-    self.fig = plt.figure()
-    self.axes = [self.fig.add_subplot('81' + str(i)) for i in range(1, 9)]
-    [(ax.set_ylim([-100, 100])) for ax in self.axes]
-    self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
-    plt.ion()
-
-  def update_plot(self):
-    time.sleep(5)
-    print("Update")
-    emg_data = self.listener.get_emg_data()
-    print("data puro")
-    print(emg_data)
-    emg_data = np.array([x[1] for x in emg_data]).T
-    print("Secont data")
-    print(emg_data)
-    # for separa los 8 canales del emg
-    for g, data in zip(self.graphs, emg_data):
-      if len(data) < self.n:
-        # Fill the left side with zeroes.
-        data = np.concatenate([np.zeros(self.n - len(data)), data])
-        print("Dato if")
-        print(data)
-      g.set_ydata(data)
-      print("Dato canal")
-      print(g)
-      print(data)
-    plt.draw()
-
-  def main(self):
-    print("maii update")
-    while True:
-    #   self.update_plot()
-      plt.pause(1.0 / 30)
