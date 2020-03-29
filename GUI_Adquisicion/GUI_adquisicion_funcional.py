@@ -591,12 +591,10 @@ class FrameGesto1 (wx.Frame):
         self.n = 512
         global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
-        print("graficcaaa")
-        print(self.graphs)
         plt.ion()
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
         self.values = []
-        self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
+        #self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
@@ -684,25 +682,14 @@ class FrameGesto1 (wx.Frame):
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
-        # self.mainMYO()
-        global hilo1
-        def prueba(arg):
-            hilo1 = threading.currentThread()
-            while getattr(hilo1, "do_run", True):
-                print("working on %s" % arg)
-                self.mainMYO(i=0)
-                # time.sleep(1)
-            print("Stopping as you wish.")
-
-        hilo1 = threading.Thread(target=prueba,args=("MYO",))
-        hilo1.start()
-
+       
     def __del__(self):
         pass
 
 # Virtual event handlers, overide them in your derived class
     def OnClickInicio(self, event):
         self.GetSegundos(None)
+       
 
     def OnClickConcentimiento(self, event):
         event.Skip()
@@ -728,24 +715,38 @@ class FrameGesto1 (wx.Frame):
                 style=wx.OK)
         dlg.ShowModal()
         segundos = int(dlg.GetValue())
-        print(segundos)
         # self.txt.SetValue(dlg.GetValue())
         self.OnTimer(None, e=segundos)
+          # self.mainMYO()
+        global hilo1
+        def prueba(arg):
+            hilo1 = threading.currentThread()
+            while getattr(hilo1, "do_run", True):
+                print("working on %s" % arg)
+                self.mainMYO(i=0)
+                # time.sleep(1)
+            print("Stopping as you wish.")
+
+        hilo1 = threading.Thread(target=prueba,args=("MYO",))
+        hilo1.start()
+
         dlg.Destroy()
 
     def OnTimer(self, event, e):
+        print("OnTimmer Inicia")
         global procesoEMG
         global i
         global c
-        global hilo1
         c = e
         if(i < c):
             i += 1
             self.timer = wx.Timer(self, -1)
             self.timer.Start(1000)
+            print("Inicio Timer")
             self.Bind(wx.EVT_TIMER, self.TimerGo)
         else:
             self.timer.Stop()
+            print("Termino Timer")
             # hilo1.do_run = False
             # hilo1.join()
 
@@ -774,37 +775,21 @@ class FrameGesto1 (wx.Frame):
     
     def mainMYO(self, i):
         global graphs
-        print("main")
         myo.init()
         hub = myo.Hub()
         self.listener = EmgCollector(512)
         with hub.run_in_background(self.listener.on_event):
-            contador = 0
             while i == 0:
-                print("funcion")
-                time.sleep(0.4)
-                print("Update")
+                time.sleep(0.005)
                 data_total= []
                 emg_data = self.listener.get_emg_data()
-                print(emg_data)
                 emg_data = np.array([x[1] for x in emg_data]).T
-                print("Transpue datos organizado vector fila")
-                print(len(emg_data))
-                print(emg_data)
-                contador = contador + 1
-                print("ojooooooooooooooooooooooo")
-                print(self.graphs)
-                print(contador)
                 for g, data in zip(self.graphs, emg_data):
                     if len(data) < self.n:
                         # Fill the left side with zeroes.
                         data = np.concatenate([np.zeros(self.n - len(data)), data])
                     g.set_ydata(data)
-                    print(data)
                     data_total.append(data)
-                    print(len(data))
-                print("data total")
-                print(data_total)
                 plt.draw()
                                     
     
@@ -819,8 +804,6 @@ class EmgCollector(myo.DeviceListener):
     self.n = n
     self.lock = Lock()
     self.emg_data_queue = deque(maxlen=n)
-    print("ojooooooo EM")
-    print(self.n)
 
   def get_emg_data(self):
     with self.lock:
