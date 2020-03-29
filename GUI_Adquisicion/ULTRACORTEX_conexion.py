@@ -1,11 +1,8 @@
 import sys
 sys.path.append('C:/Python37/Lib/site-packages')
-
 from IPython.display import clear_output
-
-
-
-
+import csv
+import os
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import random
@@ -15,7 +12,7 @@ import time
 import numpy as np
 from scipy import signal
 from pyOpenBCI import OpenBCICyton
-
+fila= 0
 pg.setConfigOption('background','w')# set white background
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
 colors = 'rgbycmwr'
@@ -35,9 +32,45 @@ data = [[0,0,0,0,0,0,0,0]]
 # Define OpenBCI callback function
 def save_data(sample):
     global data
+    global fila
     data.append([i*SCALE_FACTOR for i in sample.channels_data])
-    print("Datos Puros")
-    print(data)
+    # print("Datos Puros")
+    # print(data)
+    Guardar_Datos(data)
+    fila += 1
+
+# Crear carpeta y archivo csv
+def Crear_carpeta():
+    global carpeta 
+    global j
+    Archivo = True
+    j = 1
+    Tipo = "Parpadeos"
+    carpeta = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+    if not os.path.exists(carpeta):
+        os.mkdir(carpeta)
+
+    while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+        if os.path.isfile(carpeta + "/datos %d.csv"% j):
+            print('El archivo existe.')
+            j+=1
+        else:
+            with open(os.path.join(carpeta, "datos %d.csv"% j), 'w') as fp:
+                [fp.write('CH%d ;'%i)for i in range(1,9)]
+                fp.write("\n")
+                print("Archivo Creado")
+                Archivo = False
+
+
+#  Almacenamiento datos csv
+def Guardar_Datos(datos):
+    global fila
+    print(datos)
+    with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+        for i in range(0,8):
+            fp.write(str(datos[fila][i])+";")
+        fp.write("\n")
+   
 
 # Define function to update the graphs
 def updater():
@@ -111,8 +144,11 @@ def start_board():
     board = OpenBCICyton(port='COM8', daisy=False)
     board.start_stream(save_data)
     
+    
 # Initialize Board and graphing update
+Crear_carpeta()
 if __name__ == '__main__':
+    
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         x = threading.Thread(target=start_board)
         x.daemon = True
@@ -121,6 +157,6 @@ if __name__ == '__main__':
         timer = QtCore.QTimer()
         timer.timeout.connect(updater)
         timer.start(0)
-
+        
 
         QtGui.QApplication.instance().exec_()
