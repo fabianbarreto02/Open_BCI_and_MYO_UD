@@ -585,30 +585,30 @@ class FrameGesto1 (wx.Frame):
         bSizer57 = wx.BoxSizer(wx.HORIZONTAL)
 
         # grafica EMG
-        self.figureEMG = Figure(figsize=(1, 7), dpi=60)
+        self.figureEMG = plt.figure(figsize=(1, 7), dpi=60)
         self.axes = [self.figureEMG.add_subplot('81' + str(i)) for i in range(1, 9)]
         [(ax.set_ylim([-100, 100])) for ax in self.axes]
         self.n = 512
         global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
+        print("graficcaaa")
+        print(self.graphs)
         plt.ion()
-        # self.ax1.plot(t_eeg, data_eeg)
-        # self.ax7.plot(t_eeg, data_eeg)
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
         self.values = []
-        # self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
+        self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
         self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axes = self.figure.add_subplot(811)
-        self.axes = self.figure.add_subplot(812)
-        self.axes = self.figure.add_subplot(813)
-        self.axes = self.figure.add_subplot(814)
-        self.axes = self.figure.add_subplot(815)
-        self.axes = self.figure.add_subplot(816)
-        self.axes = self.figure.add_subplot(817)
-        self.axes = self.figure.add_subplot(818)
+        self.axesE = self.figure.add_subplot(811)
+        self.axesE = self.figure.add_subplot(812)
+        self.axesE = self.figure.add_subplot(813)
+        self.axesE = self.figure.add_subplot(814)
+        self.axesE = self.figure.add_subplot(815)
+        self.axesE = self.figure.add_subplot(816)
+        self.axesE = self.figure.add_subplot(817)
+        self.axesE = self.figure.add_subplot(818)
         # self.axes.plot(t_eeg, data_eeg)
         self.canvasEEG = FigureCanvas(self, -1, self.figure)
         bSizer57.Add(self.canvasEEG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
@@ -793,6 +793,7 @@ class FrameGesto1 (wx.Frame):
                 print(emg_data)
                 contador = contador + 1
                 print("ojooooooooooooooooooooooo")
+                print(self.graphs)
                 print(contador)
                 for g, data in zip(self.graphs, emg_data):
                     if len(data) < self.n:
