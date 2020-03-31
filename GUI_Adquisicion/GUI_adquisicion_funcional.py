@@ -586,15 +586,16 @@ class FrameGesto1 (wx.Frame):
 
         # grafica EMG
         self.figureEMG = plt.figure(figsize=(1, 7), dpi=60)
-        self.axes = [self.figureEMG.add_subplot('81' + str(i)) for i in range(1, 9)]
+        self.axes = [self.figureEMG.add_subplot(
+            '81' + str(i)) for i in range(1, 9)]
         [(ax.set_ylim([-100, 100])) for ax in self.axes]
         self.n = 512
         global graphs
-        self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
+        self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[
+                               0] for ax in self.axes]
         plt.ion()
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
-        self.values = []
-        #self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
+        # self.animator = manim.FuncAnimation(self.figureEMG,self.anim, interval=200)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
@@ -676,20 +677,28 @@ class FrameGesto1 (wx.Frame):
 
         self.Centre(wx.BOTH)
 
-
         # Connect Events
         self.m_button32.Bind(wx.EVT_BUTTON, self.OnClickInicio)
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
-       
+        # self.conexionMYO()
+        def hiloMYOConexion(arg):
+            hiloConexionMYO = threading.currentThread()
+            while getattr(hiloConexionMYO, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainMYO()
+            print("Stopping as you wish.")
+        self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
+        self.hiloConexionMYO.start()
+        
     def __del__(self):
         pass
+
 
 # Virtual event handlers, overide them in your derived class
     def OnClickInicio(self, event):
         self.GetSegundos(None)
-       
 
     def OnClickConcentimiento(self, event):
         event.Skip()
@@ -698,17 +707,8 @@ class FrameGesto1 (wx.Frame):
         self.Close()
         sys.exit()
 
-    # Metodos Plot
-    def anim(self,i):
-        if i%10 == 0:
-            self.values = []
-        else:
-            self.values.append(np.random.rand())
-        self.ax.clear()
-        self.ax.set_xlim([0,10])
-        self.ax.set_ylim([0,1])        
-        return self.ax.plot(np.arange(1,i%10+1),self.values,'d-')
     
+
     def GetSegundos(self, e):
         global segundos
         dlg = wx.TextEntryDialog(self.panel, 'Ingrese los segundos a grabar el gesto:',"Captura del gesto","", 
@@ -716,39 +716,63 @@ class FrameGesto1 (wx.Frame):
         dlg.ShowModal()
         segundos = int(dlg.GetValue())
         # self.txt.SetValue(dlg.GetValue())
-        self.OnTimer(None, e=segundos)
-          # self.mainMYO()
-        global hilo1
-        def prueba(arg):
-            hilo1 = threading.currentThread()
-            while getattr(hilo1, "do_run", True):
-                print("working on %s" % arg)
-                self.mainMYO(i=0)
-                # time.sleep(1)
-            print("Stopping as you wish.")
+        # self.OnTimer(None, e=segundos)
 
-        hilo1 = threading.Thread(target=prueba,args=("MYO",))
-        hilo1.start()
+        
+        def hiloRunTimmer(arg):
+            hiloRunTimmer = threading.currentThread()
+            while getattr(hiloRunTimmer, "do_run", True):
+                    print("working on %s" % arg)
+                    self.led.SetValue("00:00")
+                    self.OnTimer(None, e=segundos)
+            print("Stopping as you wish.")
+        self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
+        self.hiloRunTimmer.start()
+
+      
+        # def hiloMYOConexion(arg):
+        #     hiloConexionMYO = threading.currentThread()
+        #     while getattr(hiloConexionMYO, "do_run", True):
+        #             print("working on %s" % arg)
+        #             self.mainMYO()
+        #     print("Stopping as you wish.")
+        # self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
+        # self.hiloConexionMYO.start()
+
+        def hiloMYOSaved(arg):
+            hiloMYOSaved = threading.currentThread()
+            while getattr(hiloMYOSaved, "do_run", True):
+                    print("working on %s" % arg)
+                    self.SaveMYO()
+            print("Stopping as you wish.")
+        self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
+        self.hiloMYOSaved.start()
 
         dlg.Destroy()
 
     def OnTimer(self, event, e):
         print("OnTimmer Inicia")
-        global procesoEMG
         global i
         global c
         c = e
         if(i < c):
             i += 1
-            self.timer = wx.Timer(self, -1)
-            self.timer.Start(1000)
-            print("Inicio Timer")
-            self.Bind(wx.EVT_TIMER, self.TimerGo)
+            
+            time.sleep(1)
+            self.TimerGo(None)
+            
+            
         else:
-            self.timer.Stop()
             print("Termino Timer")
-            # hilo1.do_run = False
-            # hilo1.join()
+            self.hiloRunTimmer.do_run = False
+            self.hiloConexionMYO.do_run = False
+            self.hiloConexionMYO.join()
+            self.hiloMYOSaved.do_run = False
+            self.hiloMYOSaved.join()
+
+
+           
+            
 
     def TimerGo(self, event):
         global s
@@ -772,25 +796,62 @@ class FrameGesto1 (wx.Frame):
         t = str(m) + ":" + str(s)
         self.led.SetValue(t)
         self.OnTimer(None, c)
-    
-    def mainMYO(self, i):
-        global graphs
+
+    def conexionMYO(self):
+        print("Realizando Conexión MYO")
         myo.init()
-        hub = myo.Hub()
+        self.hub = myo.Hub()
         self.listener = EmgCollector(512)
-        with hub.run_in_background(self.listener.on_event):
-            while i == 0:
-                time.sleep(0.005)
-                data_total= []
-                emg_data = self.listener.get_emg_data()
-                emg_data = np.array([x[1] for x in emg_data]).T
-                for g, data in zip(self.graphs, emg_data):
-                    if len(data) < self.n:
+        print(self.listener)
+        print("Conexión MYO Establecida")    
+    
+    def mainMYO(self):
+        global graphs
+        time.sleep(0.1)
+        myo.init()
+        self.hub = myo.Hub()
+        self.listener = EmgCollector(512)
+        print(self.listener)
+        print("Conexión MYO Establecida")    
+        print("Inica Plot")
+        with self.hub.run_in_background(self.listener.on_event):
+            # while i == 0:
+            # data_total= []
+            emg_data = self.listener.get_emg_data()
+            emg_data = np.array([x[1] for x in emg_data]).T
+            for g, data in zip(self.graphs, emg_data):
+                if len(data) < self.n:
                         # Fill the left side with zeroes.
-                        data = np.concatenate([np.zeros(self.n - len(data)), data])
-                    g.set_ydata(data)
-                    data_total.append(data)
-                plt.draw()
+                    data = np.concatenate([np.zeros(self.n - len(data)), data])
+                g.set_ydata(data)
+                # data_total.append(data)
+            plt.draw()
+            print("Stop MYO")
+        return
+    
+    def SaveMYO(self):
+        global graphs
+        time.sleep(0.005)
+        myo.init()
+        self.hub = myo.Hub()
+        self.listener = EmgCollector(512)
+        # print(self.listener)
+        # print("Conexión MYO Establecida")    
+        # print("Inica Plot")
+        with self.hub.run_in_background(self.listener.on_event):
+            # while i == 0:
+            data_total= []
+            emg_data = self.listener.get_emg_data()
+            emg_data = np.array([x[1] for x in emg_data]).T
+            for g, data in zip(self.graphs, emg_data):
+                if len(data) < self.n:
+                        # Fill the left side with zeroes.
+                    data = np.concatenate([np.zeros(self.n - len(data)), data])
+                # g.set_ydata(data)
+                data_total.append(data)
+            print("Guardamyo")
+        return
+    
                                     
     
     

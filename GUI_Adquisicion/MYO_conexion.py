@@ -75,6 +75,7 @@ class Plot(object):
     print("maii update")
     while True:
       self.update_plot()
+      print("1232334")
       plt.pause(1.0 / 30)
 
 
