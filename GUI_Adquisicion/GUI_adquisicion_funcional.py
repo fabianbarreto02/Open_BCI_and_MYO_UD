@@ -807,11 +807,10 @@ class FrameGesto1 (wx.Frame):
     
     def mainMYO(self):
         global graphs
-        time.sleep(0.1)
         myo.init()
         self.hub = myo.Hub()
         self.listener = EmgCollector(512)
-        print(self.listener)
+        # print(self.listener)
         print("Conexión MYO Establecida")    
         print("Inica Plot")
         with self.hub.run_in_background(self.listener.on_event):
@@ -819,6 +818,7 @@ class FrameGesto1 (wx.Frame):
             # data_total= []
             emg_data = self.listener.get_emg_data()
             emg_data = np.array([x[1] for x in emg_data]).T
+            time.sleep(0.1)
             for g, data in zip(self.graphs, emg_data):
                 if len(data) < self.n:
                         # Fill the left side with zeroes.
@@ -851,6 +851,27 @@ class FrameGesto1 (wx.Frame):
                 data_total.append(data)
             print("Guardamyo")
         return
+    
+    def Crear_carpeta():
+        global carpeta 
+        global j
+        Archivo = True
+        j = 1
+        Tipo = "Parpadeos"
+        carpeta = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpeta):
+            os.mkdir(carpeta)
+
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpeta + "/datos %d.csv"% j):
+                print('El archivo existe.')
+                j+=1
+            else:
+                with open(os.path.join(carpeta, "datos %d.csv"% j), 'w') as fp:
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado")
+                    Archivo = False
     
                                     
     
