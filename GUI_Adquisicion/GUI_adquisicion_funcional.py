@@ -743,8 +743,9 @@ class FrameGesto1 (wx.Frame):
             hiloMYOSaved = threading.currentThread()
             while getattr(hiloMYOSaved, "do_run", True):
                     print("working on %s" % arg)
-                    self.SaveMYO()
+                    self.SaveMYO(i=0)
             print("Stopping as you wish.")
+            self.SaveMYO(i=1)
         self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
         self.hiloMYOSaved.start()
 
@@ -820,13 +821,13 @@ class FrameGesto1 (wx.Frame):
                 emg_data = self.listener.get_emg_data()
                 emg_data = np.array([x[1] for x in emg_data]).T
                 print(emg_data)
-            # for g, data in zip(self.graphs, emg_data):
-            #     if len(data) < self.n:
-            #             # Fill the left side with zeroes.
-            #         data = np.concatenate([np.zeros(self.n - len(data)), data])
-            #     g.set_ydata(data)
-            #     # data_total.append(data)
-            # plt.draw()
+                for g, data in zip(self.graphs, emg_data):
+                    if len(data) < self.n:
+                            # Fill the left side with zeroes.
+                        data = np.concatenate([np.zeros(self.n - len(data)), data])
+                    g.set_ydata(data)
+                    # data_total.append(data)
+                plt.draw()
             # print("Stop MYO")
     
     def SaveMYO(self,i):
@@ -839,17 +840,17 @@ class FrameGesto1 (wx.Frame):
         # print("Conexión MYO Establecida")    
         # print("Inica Plot")
         with hub.run_in_background(self.listener.on_event):
-            # while i == 0:
-            data_total= []
-            emg_data = self.listener.get_emg_data()
-            emg_data = np.array([x[1] for x in emg_data]).T
-            for g, data in zip(self.graphs, emg_data):
-                if len(data) < self.n:
-                        # Fill the left side with zeroes.
-                    data = np.concatenate([np.zeros(self.n - len(data)), data])
-                # g.set_ydata(data)
-                data_total.append(data)
-            print("Guardamyo")
+            while i == 0:
+                data_total= []
+                emg_data = self.listener.get_emg_data()
+                emg_data = np.array([x[1] for x in emg_data]).T
+                for g, data in zip(self.graphs, emg_data):
+                    if len(data) < self.n:
+                            # Fill the left side with zeroes.
+                        data = np.concatenate([np.zeros(self.n - len(data)), data])
+                    # g.set_ydata(data)
+                    data_total.append(data)
+                print("Guardamyo")
     
     def Crear_carpeta():
         global carpeta 
