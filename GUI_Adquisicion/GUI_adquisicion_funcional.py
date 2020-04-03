@@ -682,7 +682,7 @@ class FrameGesto1 (wx.Frame):
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
-        # self.conexionMYO()
+        self.conexionMYO()
         def hiloMYOConexion(arg):
             hiloConexionMYO = threading.currentThread()
             while getattr(hiloConexionMYO, "do_run", True):
@@ -799,24 +799,22 @@ class FrameGesto1 (wx.Frame):
         self.led.SetValue(t)
         self.OnTimer(None, c)
 
-    # def conexionMYO(self):
-    #     print("Realizando Conexión MYO")
-    #     myo.init()
-    #     self.hub = myo.Hub()
-    #     self.listener = EmgCollector(512)
-    #     print(self.listener)
-    #     print("Conexión MYO Establecida")    
+    def conexionMYO(self):
+        print("Realizando Conexión MYO")
+        myo.init()
+        hub = myo.Hub()
+        listener = EmgCollector(512)
+        with hub.run_in_background(listener.on_event):
+            print("Conexión MYO Establecida")    
+        
     
     def mainMYO(self,i):
         global graphs
-        myo.init()
-        hub = myo.Hub()
-        self.listener = EmgCollector(512)
         # print(self.listener)
-        print("Conexión MYO Establecida")    
+        
         print("Inica Plot")
-        with hub.run_in_background(self.listener.on_event):
-            while i == 0:
+        self.listener = EmgCollector(512)
+        while i == 0:
             # data_total= []
                 time.sleep(0.1)
                 emg_data = self.listener.get_emg_data()
