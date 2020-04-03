@@ -766,10 +766,11 @@ class FrameGesto1 (wx.Frame):
         else:
             print("Termino Timer")
             self.hiloRunTimmer.do_run = False
-            self.hiloConexionMYO.do_run = False
-            self.hiloConexionMYO.join()
             self.hiloMYOSaved.do_run = False
             self.hiloMYOSaved.join()
+            # self.hiloConexionMYO.do_run = False
+            # self.hiloConexionMYO.join()
+            
 
 
            
@@ -840,17 +841,17 @@ class FrameGesto1 (wx.Frame):
         # print("Conexión MYO Establecida")    
         # print("Inica Plot")
         with hub.run_in_background(self.listener.on_event):
-            while i == 0:
-                data_total= []
-                emg_data = self.listener.get_emg_data()
-                emg_data = np.array([x[1] for x in emg_data]).T
-                for g, data in zip(self.graphs, emg_data):
-                    if len(data) < self.n:
-                            # Fill the left side with zeroes.
-                        data = np.concatenate([np.zeros(self.n - len(data)), data])
-                    # g.set_ydata(data)
-                    data_total.append(data)
-                print("Guardamyo")
+            
+            data_total= []
+            emg_data = self.listener.get_emg_data()
+            emg_data = np.array([x[1] for x in emg_data]).T
+            for g, data in zip(self.graphs, emg_data):
+                if len(data) < self.n:
+                        # Fill the left side with zeroes.
+                    data = np.concatenate([np.zeros(self.n - len(data)), data])
+                # g.set_ydata(data)
+                data_total.append(data)
+            print("Guardamyo")
     
     def Crear_carpeta():
         global carpeta 
