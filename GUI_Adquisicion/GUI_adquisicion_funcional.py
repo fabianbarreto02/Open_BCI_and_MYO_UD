@@ -687,7 +687,7 @@ class FrameGesto1 (wx.Frame):
             hiloConexionMYO = threading.currentThread()
             while getattr(hiloConexionMYO, "do_run", True):
                     print("working on %s" % arg)
-                    self.mainMYO()
+                    self.mainMYO(i=0)
             print("Stopping as you wish.")
         self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
         self.hiloConexionMYO.start()
@@ -805,7 +805,7 @@ class FrameGesto1 (wx.Frame):
     #     print(self.listener)
     #     print("Conexión MYO Establecida")    
     
-    def mainMYO(self):
+    def mainMYO(self,i):
         global graphs
         myo.init()
         hub = myo.Hub()
@@ -814,12 +814,12 @@ class FrameGesto1 (wx.Frame):
         print("Conexión MYO Establecida")    
         print("Inica Plot")
         with hub.run_in_background(self.listener.on_event):
-            # while i == 0:
+            while i == 0:
             # data_total= []
-            time.sleep(0.1)
-            emg_data = self.listener.get_emg_data()
-            emg_data = np.array([x[1] for x in emg_data]).T
-            print(emg_data)
+                time.sleep(0.1)
+                emg_data = self.listener.get_emg_data()
+                emg_data = np.array([x[1] for x in emg_data]).T
+                print(emg_data)
             # for g, data in zip(self.graphs, emg_data):
             #     if len(data) < self.n:
             #             # Fill the left side with zeroes.
@@ -829,7 +829,7 @@ class FrameGesto1 (wx.Frame):
             # plt.draw()
             # print("Stop MYO")
     
-    def SaveMYO(self):
+    def SaveMYO(self,i):
         global graphs
         time.sleep(0.005)
         myo.init()
