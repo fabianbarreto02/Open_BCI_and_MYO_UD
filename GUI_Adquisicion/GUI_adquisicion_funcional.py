@@ -802,10 +802,10 @@ class FrameGesto1 (wx.Frame):
     def conexionMYO(self):
         print("Realizando Conexión MYO")
         myo.init()
-        hub = myo.Hub()
-        listener = EmgCollector(512)
-        with hub.run_in_background(listener.on_event):
-            print("Conexión MYO Establecida")    
+        # hub = myo.Hub()
+        # listener = EmgCollector(512)
+       
+        print("Conexión MYO Establecida")    
         
     
     def mainMYO(self,i):
@@ -813,21 +813,22 @@ class FrameGesto1 (wx.Frame):
         # print(self.listener)
         
         print("Inica Plot")
+        hub = myo.Hub()
         self.listener = EmgCollector(512)
-        while i == 0:
-            # data_total= []
-                time.sleep(0.1)
-                emg_data = self.listener.get_emg_data()
-                emg_data = np.array([x[1] for x in emg_data]).T
-                print(emg_data)
-                for g, data in zip(self.graphs, emg_data):
-                    if len(data) < self.n:
-                            # Fill the left side with zeroes.
-                        data = np.concatenate([np.zeros(self.n - len(data)), data])
-                    g.set_ydata(data)
-                    # data_total.append(data)
-                plt.draw()
-            # print("Stop MYO")
+        time.sleep(0.1)
+        with hub.run_in_background(self.listener.on_event):
+               
+            
+            emg_data = self.listener.get_emg_data()
+            emg_data = np.array([x[1] for x in emg_data]).T
+            print(emg_data)
+            for g, data in zip(self.graphs, emg_data):
+                if len(data) < self.n:
+                    
+                    data = np.concatenate([np.zeros(self.n - len(data)), data])
+                g.set_ydata(data)
+                
+            plt.draw()
     
     def SaveMYO(self,i):
         global graphs
