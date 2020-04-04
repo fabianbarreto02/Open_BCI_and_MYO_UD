@@ -801,6 +801,7 @@ class FrameGesto1 (wx.Frame):
         self.stopconexion = False
         self.stopsaved = False
         print("Conexión MYO Establecida")
+        self.Crear_carpeta()
         
 
     def mainMYO(self):
@@ -840,14 +841,25 @@ class FrameGesto1 (wx.Frame):
             if len(data) < self.n:
                 data = np.concatenate([np.zeros(self.n - len(data)), data])    
             self.data_total.append(data)
+        self.Guardar_Datos(self.data_total)
+        self.fila += 1
         print("Guardamyo")
     
-    def Crear_carpeta():
+    def Guardar_Datos(self, datos):
+        print("Guardadatos")
+        print(datos)
+        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+            for i in range(0,8):
+                fp.write(str(datos[self.fila][i])+";")
+            fp.write("\n")
+    
+    def Crear_carpeta(self):
         global carpeta 
         global j
+        self.fila= 0
         Archivo = True
         j = 1
-        Tipo = "Parpadeos"
+        Tipo = "PruebaMYO"
         carpeta = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
         if not os.path.exists(carpeta):
             os.mkdir(carpeta)
