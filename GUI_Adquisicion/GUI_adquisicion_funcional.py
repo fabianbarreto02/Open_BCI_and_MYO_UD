@@ -825,7 +825,6 @@ class FrameGesto1 (wx.Frame):
         global graphs
         emg_data = self.listener.get_emg_data()
         emg_data = np.array([x[1] for x in emg_data]).T
-        print("data")
         print(emg_data)
         for g, data in zip(self.graphs, emg_data):
             if len(data) < self.n:
@@ -834,29 +833,33 @@ class FrameGesto1 (wx.Frame):
         plt.draw()
     
     def SaveMYO(self):
+        global fila
         self.data_total= []
         emg_data = self.listener.get_emg_data()
-        emg_data = np.array([x[1] for x in emg_data]).T
+        emg_data = np.array([x[1] for x in emg_data])
+        print("datos saved")
+        print(emg_data)
         for g, data in zip(self.graphs, emg_data):
             if len(data) < self.n:
                 data = np.concatenate([np.zeros(self.n - len(data)), data])    
-            self.data_total.append(data)
-        self.Guardar_Datos(self.data_total)
-        self.fila += 1
+        self.data_total.append(emg_data)
+        self.Guardar_Datos(emg_data)
+        fila += 1
         print("Guardamyo")
     
     def Guardar_Datos(self, datos):
         print("Guardadatos")
         print(datos)
-        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv      
             for i in range(0,8):
-                fp.write(str(datos[self.fila][i])+";")
+                fp.write(str(datos[fila][i])+";")
             fp.write("\n")
     
     def Crear_carpeta(self):
         global carpeta 
         global j
-        self.fila= 0
+        global fila
+        fila = 0
         Archivo = True
         j = 1
         Tipo = "PruebaMYO"
