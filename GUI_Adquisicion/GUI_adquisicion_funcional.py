@@ -818,7 +818,7 @@ class FrameGesto1 (wx.Frame):
         with self.hub.run_in_background(self.listener.on_event):
             while True:
                 self.SaveMYO()
-                time.sleep(0.005)
+                time.sleep(0.1)
                 if (self.stopsaved == True):
                     break
     
@@ -850,7 +850,7 @@ class FrameGesto1 (wx.Frame):
             # print("Dataaaa")       
             # print(data)
             # self.Guardar_Datos(data)
-            data_total.append(data)
+            data_total.append(np.array(data[-100:]))
         # self.data_total.append(emg_data)
         # print("Dato: " + str(i))
         # print(data_total)
@@ -885,35 +885,35 @@ class FrameGesto1 (wx.Frame):
 
         for f in range(len(datos1)//numCanales):
             datoscanal1= np.concatenate(( datoscanal1,  datos1[contadorcanal]))
-            contadorcanal + numCanales 
+            contadorcanal += numCanales 
         contadorcanal = 1
         for f in range(len(datos1)//numCanales):
             datoscanal2= np.concatenate(( datoscanal2,  datos1[contadorcanal]))
-            contadorcanal + numCanales 
+            contadorcanal += numCanales 
         contadorcanal = 2
         for f in range(len(datos1)//numCanales):
             datoscanal3= np.concatenate(( datoscanal3,  datos1[contadorcanal]))
-            contadorcanal + numCanales   
+            contadorcanal += numCanales   
         contadorcanal = 3
         for f in range(len(datos1)//numCanales):
             datoscanal4= np.concatenate(( datoscanal4,  datos1[contadorcanal]))
-            contadorcanal + numCanales 
+            contadorcanal += numCanales 
         contadorcanal = 4
         for f in range(len(datos1)//numCanales):
             datoscanal5= np.concatenate(( datoscanal5,  datos1[contadorcanal]))
-            contadorcanal + numCanales   
+            contadorcanal += numCanales   
         contadorcanal = 5
         for f in range(len(datos1)//numCanales):
             datoscanal6= np.concatenate(( datoscanal6,  datos1[contadorcanal]))
-            contadorcanal + numCanales
+            contadorcanal += numCanales
         contadorcanal = 6
         for f in range(len(datos1)//numCanales):
             datoscanal7= np.concatenate(( datoscanal7,  datos1[contadorcanal]))
-            contadorcanal + numCanales
+            contadorcanal += numCanales
         contadorcanal = 7
         for f in range(len(datos1)//numCanales):
             datoscanal8= np.concatenate(( datoscanal8,  datos1[contadorcanal]))
-            contadorcanal + numCanales        
+            contadorcanal += numCanales        
         print("array canal1")
         print(datoscanal1)
         print(len(datoscanal1))
