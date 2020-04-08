@@ -747,8 +747,7 @@ class FrameGesto1 (wx.Frame):
         global c
         c = e
         if(i < c):
-            i += 1
-            
+            i += 1   
             time.sleep(1)
             self.TimerGo(None)
             
@@ -756,14 +755,13 @@ class FrameGesto1 (wx.Frame):
         else:
             print("Termino Timer")
             self.hiloRunTimmer.do_run = False
-            self.stopsaved= True
-            self.hiloMYOSaved.do_run = False
-            self.hiloMYOSaved.join()
             self.stopconexion= True
             self.hiloConexionMYO.do_run = False
             self.hiloConexionMYO.join()
-            print("Data Capturada")
-            print(self.data_total)
+            self.stopsaved= True
+            self.hiloMYOSaved.do_run = False
+            self.hiloMYOSaved.join()
+            self.Guardar_Datos(data_total)
             
 
 
@@ -791,6 +789,7 @@ class FrameGesto1 (wx.Frame):
             s = str(s)
         t = str(m) + ":" + str(s)
         self.led.SetValue(t)
+        print("c= " + str(c))
         self.OnTimer(None, c)
 
     def conexionMYO(self):
@@ -805,6 +804,8 @@ class FrameGesto1 (wx.Frame):
         
 
     def mainMYO(self):
+        global data_total
+        data_total = []
         with self.hub.run_in_background(self.listener.on_event):
             while True:
                 self.plotMYO()
@@ -834,26 +835,113 @@ class FrameGesto1 (wx.Frame):
     
     def SaveMYO(self):
         global fila
-        self.data_total= []
+        global data_total
         emg_data = self.listener.get_emg_data()
-        emg_data = np.array([x[1] for x in emg_data])
+        emg_data = np.array([x[1] for x in emg_data]).T
         print("datos saved")
-        print(emg_data)
-        for g, data in zip(self.graphs, emg_data):
+        # a = list()
+        # a = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],[11, 12, 13, 14, 15, 16, 17, 18, 19, 20],[21, 22, 23, 24, 25, 26, 27, 28, 29, 30,]]
+        # print(emg_data)
+   
+        for g, data in zip(self.graphs,  emg_data):
             if len(data) < self.n:
-                data = np.concatenate([np.zeros(self.n - len(data)), data])    
-        self.data_total.append(emg_data)
-        self.Guardar_Datos(emg_data)
-        fila += 1
-        print("Guardamyo")
+                # completa vector columna con zeros para tener longitud de 512 o n
+                data = np.concatenate([np.zeros(self.n - len(data)), data]) 
+            # print("Dataaaa")       
+            # print(data)
+            # self.Guardar_Datos(data)
+            data_total.append(data)
+        # self.data_total.append(emg_data)
+        # print("Dato: " + str(i))
+        # print(data_total)
+        # print("fin")
+        # for u in range(0,len(data_total[0])):
+        #     print(data_total[0][u])
+
+        
+       
+        # fila += 1
+        # print("Guardamyo")
     
     def Guardar_Datos(self, datos):
-        print("Guardadatos")
+        global fila
+        numCanales = 8
         print(datos)
-        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv      
-            for i in range(0,8):
-                fp.write(str(datos[fila][i])+";")
-            fp.write("\n")
+        print("guarda")
+        print(len(datos))
+        print("array")
+        datos1 = np.array(datos)
+        print(datos1)
+        contadorcanal = 0
+        datoscanal1 =[0]
+        datoscanal2 =[0]
+        datoscanal3 =[0]
+        datoscanal4 =[0]
+        datoscanal5 =[0]
+        datoscanal6 =[0]
+        datoscanal7 =[0]
+        datoscanal8 =[0]
+        
+
+        for f in range(len(datos1)//numCanales):
+            datoscanal1= np.concatenate(( datoscanal1,  datos1[contadorcanal]))
+            contadorcanal + numCanales 
+        contadorcanal = 1
+        for f in range(len(datos1)//numCanales):
+            datoscanal2= np.concatenate(( datoscanal2,  datos1[contadorcanal]))
+            contadorcanal + numCanales 
+        contadorcanal = 2
+        for f in range(len(datos1)//numCanales):
+            datoscanal3= np.concatenate(( datoscanal3,  datos1[contadorcanal]))
+            contadorcanal + numCanales   
+        contadorcanal = 3
+        for f in range(len(datos1)//numCanales):
+            datoscanal4= np.concatenate(( datoscanal4,  datos1[contadorcanal]))
+            contadorcanal + numCanales 
+        contadorcanal = 4
+        for f in range(len(datos1)//numCanales):
+            datoscanal5= np.concatenate(( datoscanal5,  datos1[contadorcanal]))
+            contadorcanal + numCanales   
+        contadorcanal = 5
+        for f in range(len(datos1)//numCanales):
+            datoscanal6= np.concatenate(( datoscanal6,  datos1[contadorcanal]))
+            contadorcanal + numCanales
+        contadorcanal = 6
+        for f in range(len(datos1)//numCanales):
+            datoscanal7= np.concatenate(( datoscanal7,  datos1[contadorcanal]))
+            contadorcanal + numCanales
+        contadorcanal = 7
+        for f in range(len(datos1)//numCanales):
+            datoscanal8= np.concatenate(( datoscanal8,  datos1[contadorcanal]))
+            contadorcanal + numCanales        
+        print("array canal1")
+        print(datoscanal1)
+        print(len(datoscanal1))
+        print("array canal2")
+        print(datoscanal2)
+        print("array canal3")
+        print(datoscanal3)
+        # datos2 = np.reshape(datos1,(10,9))
+        # print("ojo datos")
+        # print(datos2)
+        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
+                for i in range(0,len(datoscanal1)):
+                    # fp.write(str(datos[i])+";")
+                    fp.write(str(datoscanal1[i])+";")
+                    fp.write(str(datoscanal2[i])+";")
+                    fp.write(str(datoscanal3[i])+";")
+                    fp.write(str(datoscanal4[i])+";")
+                    fp.write(str(datoscanal5[i])+";")
+                    fp.write(str(datoscanal6[i])+";")
+                    fp.write(str(datoscanal7[i])+";")
+                    fp.write(str(datoscanal8[i])+";")
+                    fp.write("\n")
+            
+            
+            
+            # for i in range(0,2):
+            #     fp.write(str(datos[fila][i])+";")
+            # fp.write("\n")
     
     def Crear_carpeta(self):
         global carpeta 
