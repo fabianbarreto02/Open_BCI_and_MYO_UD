@@ -714,10 +714,7 @@ class FrameGesto1 (wx.Frame):
         dlg = wx.TextEntryDialog(self.panel, 'Ingrese los segundos a grabar el gesto:',"Captura del gesto","", 
                 style=wx.OK)
         dlg.ShowModal()
-        segundos = int(dlg.GetValue())
-        # self.txt.SetValue(dlg.GetValue())
-        # self.OnTimer(None, e=segundos)
-
+        segundos = int(dlg.GetValue()) 
         
         def hiloRunTimmer(arg):
             hiloRunTimmer = threading.currentThread()
@@ -789,7 +786,6 @@ class FrameGesto1 (wx.Frame):
             s = str(s)
         t = str(m) + ":" + str(s)
         self.led.SetValue(t)
-        print("c= " + str(c))
         self.OnTimer(None, c)
 
     def conexionMYO(self):
@@ -814,7 +810,6 @@ class FrameGesto1 (wx.Frame):
                     break
     
     def mainSavedMYO(self):
-        print("ojo")
         with self.hub.run_in_background(self.listener.on_event):
             while True:
                 self.SaveMYO()
@@ -826,7 +821,6 @@ class FrameGesto1 (wx.Frame):
         global graphs
         emg_data = self.listener.get_emg_data()
         emg_data = np.array([x[1] for x in emg_data]).T
-        print(emg_data)
         for g, data in zip(self.graphs, emg_data):
             if len(data) < self.n:
                 data = np.concatenate([np.zeros(self.n - len(data)), data])
@@ -836,32 +830,22 @@ class FrameGesto1 (wx.Frame):
     def SaveMYO(self):
         global fila
         global data_total
+        numMuestras = 512
         emg_data = self.listener.get_emg_data()
         emg_data = np.array([x[1] for x in emg_data]).T
         print("datos saved")
         # a = list()
-        # a = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],[11, 12, 13, 14, 15, 16, 17, 18, 19, 20],[21, 22, 23, 24, 25, 26, 27, 28, 29, 30,]]
-        # print(emg_data)
-   
+        # a = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],[11, 12, 13, 14, 15, 16, 17, 18, 19, 20],[21, 22, 23, 24, 25, 26, 27, 28, 29, 30,],[31,32,33,34,35,36,37,38,39,40],[41,42,43,44,46,47,48,49,50],[51,52,53,54,55,56,57,58,59,60],[61,62,63,64,65,66,67,68,69,70],[71,72,73,74,75,76,77,78,79,80]]
         for g, data in zip(self.graphs,  emg_data):
-            if len(data) < self.n:
+            if len(data) < numMuestras:
                 # completa vector columna con zeros para tener longitud de 512 o n
-                data = np.concatenate([np.zeros(self.n - len(data)), data]) 
-            # print("Dataaaa")       
-            # print(data)
-            # self.Guardar_Datos(data)
-            data_total.append(np.array(data[-100:]))
-        # self.data_total.append(emg_data)
+                data = np.concatenate([np.zeros(numMuestras - len(data)), data]) 
+            data_total.append(data)
+            # data_total.append(np.array(data[-100:]))
         # print("Dato: " + str(i))
         # print(data_total)
         # print("fin")
-        # for u in range(0,len(data_total[0])):
-        #     print(data_total[0][u])
-
-        
        
-        # fila += 1
-        # print("Guardamyo")
     
     def Guardar_Datos(self, datos):
         global fila
@@ -884,35 +868,35 @@ class FrameGesto1 (wx.Frame):
         
 
         for f in range(len(datos1)//numCanales):
-            datoscanal1= np.concatenate(( datoscanal1,  datos1[contadorcanal]))
+            datoscanal1= np.concatenate([datos1[contadorcanal] ,datoscanal1])
             contadorcanal += numCanales 
         contadorcanal = 1
         for f in range(len(datos1)//numCanales):
-            datoscanal2= np.concatenate(( datoscanal2,  datos1[contadorcanal]))
+            datoscanal2= np.concatenate([datos1[contadorcanal] ,datoscanal2])
             contadorcanal += numCanales 
         contadorcanal = 2
         for f in range(len(datos1)//numCanales):
-            datoscanal3= np.concatenate(( datoscanal3,  datos1[contadorcanal]))
+            datoscanal3= np.concatenate([datos1[contadorcanal] ,datoscanal3])
             contadorcanal += numCanales   
         contadorcanal = 3
         for f in range(len(datos1)//numCanales):
-            datoscanal4= np.concatenate(( datoscanal4,  datos1[contadorcanal]))
+            datoscanal4= np.concatenate([datos1[contadorcanal] ,datoscanal4])
             contadorcanal += numCanales 
         contadorcanal = 4
         for f in range(len(datos1)//numCanales):
-            datoscanal5= np.concatenate(( datoscanal5,  datos1[contadorcanal]))
+            datoscanal5= np.concatenate([datos1[contadorcanal] ,datoscanal5])
             contadorcanal += numCanales   
         contadorcanal = 5
         for f in range(len(datos1)//numCanales):
-            datoscanal6= np.concatenate(( datoscanal6,  datos1[contadorcanal]))
+            datoscanal6= np.concatenate([datos1[contadorcanal] ,datoscanal6])
             contadorcanal += numCanales
         contadorcanal = 6
         for f in range(len(datos1)//numCanales):
-            datoscanal7= np.concatenate(( datoscanal7,  datos1[contadorcanal]))
+            datoscanal7= np.concatenate([datos1[contadorcanal] ,datoscanal7])
             contadorcanal += numCanales
         contadorcanal = 7
         for f in range(len(datos1)//numCanales):
-            datoscanal8= np.concatenate(( datoscanal8,  datos1[contadorcanal]))
+            datoscanal8= np.concatenate([datos1[contadorcanal] ,datoscanal8])
             contadorcanal += numCanales        
         print("array canal1")
         print(datoscanal1)
@@ -921,12 +905,19 @@ class FrameGesto1 (wx.Frame):
         print(datoscanal2)
         print("array canal3")
         print(datoscanal3)
-        # datos2 = np.reshape(datos1,(10,9))
-        # print("ojo datos")
-        # print(datos2)
+        print("array canal4")
+        print(datoscanal4)
+        print("array canal5")
+        print(datoscanal5)
+        print("array canal6")
+        print(datoscanal6)
+        print("array canal7")
+        print(datoscanal7)
+        print("array canal8")
+        print(datoscanal8)
+
         with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
                 for i in range(0,len(datoscanal1)):
-                    # fp.write(str(datos[i])+";")
                     fp.write(str(datoscanal1[i])+";")
                     fp.write(str(datoscanal2[i])+";")
                     fp.write(str(datoscanal3[i])+";")
@@ -937,11 +928,6 @@ class FrameGesto1 (wx.Frame):
                     fp.write(str(datoscanal8[i])+";")
                     fp.write("\n")
             
-            
-            
-            # for i in range(0,2):
-            #     fp.write(str(datos[fila][i])+";")
-            # fp.write("\n")
     
     def Crear_carpeta(self):
         global carpeta 
