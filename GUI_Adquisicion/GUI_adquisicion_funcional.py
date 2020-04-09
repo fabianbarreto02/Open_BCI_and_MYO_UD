@@ -758,7 +758,7 @@ class FrameGesto1 (wx.Frame):
             self.stopsaved= True
             self.hiloMYOSaved.do_run = False
             self.hiloMYOSaved.join()
-            self.Guardar_Datos(data_total)
+            
             
 
 
@@ -810,10 +810,12 @@ class FrameGesto1 (wx.Frame):
                     break
     
     def mainSavedMYO(self):
+        global fila
+        fila = 0
         with self.hub.run_in_background(self.listener.on_event):
             while True:
                 self.SaveMYO()
-                time.sleep(0.1)
+                time.sleep(2.56)
                 if (self.stopsaved == True):
                     break
     
@@ -832,16 +834,20 @@ class FrameGesto1 (wx.Frame):
         global data_total
         numMuestras = 512
         emg_data = self.listener.get_emg_data()
-        emg_data = np.array([x[1] for x in emg_data]).T
+        print("datos saved originales")
+        print(emg_data)
+        emg_data = [x[1] for x in emg_data]
         print("datos saved")
+        print(emg_data)
+        self.Guardar_Datos(emg_data)
         # a = list()
         # a = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],[11, 12, 13, 14, 15, 16, 17, 18, 19, 20],[21, 22, 23, 24, 25, 26, 27, 28, 29, 30,],[31,32,33,34,35,36,37,38,39,40],[51,52,53,54,55,56,57,58,59,60],[51,52,53,54,55,56,57,58,59,60],[61,62,63,64,65,66,67,68,69,70],[71,72,73,74,75,76,77,78,79,80]]
-        for g, data in zip(self.graphs,  emg_data):
-            if len(data) < numMuestras:
-                # completa vector columna con zeros para tener longitud de 512 o n
-                data = np.concatenate([np.zeros(numMuestras - len(data)), data]) 
-            data_total.append(data)
-            # data_total.append(np.array(data[-100:]))
+        # for g, data in zip(self.graphs,  emg_data):
+        #     if len(data) < numMuestras:
+        #         # completa vector columna con zeros para tener longitud de 512 o n
+        #         data = np.concatenate([np.zeros(numMuestras - len(data)), data]) 
+        #     #data_total.append(np.array(data))
+        #     data_total.append(np.array(data[-10:]))
         # print("Dato: " + str(i))
         # print(data_total)
         # print("fin")
@@ -850,60 +856,67 @@ class FrameGesto1 (wx.Frame):
     def Guardar_Datos(self, datos):
         global fila
         numCanales = 8
-        print(datos)
         print("guarda")
         print(len(datos))
+        #datos= np.array(datos)
+        print(datos)
         print("array")
         # contadorcanal = 0
-        datoscanal1 =[]
-        datoscanal2 =[]
-        datoscanal3 =[]
-        datoscanal4 =[]
-        datoscanal5 =[]
-        datoscanal6 =[]
-        datoscanal7 =[]
-        datoscanal8 =[]
+        # datoscanal1 =[0]
+        # datoscanal2 =[0]
+        # datoscanal3 =[0]
+        # datoscanal4 =[0]
+        # datoscanal5 =[0]
+        # datoscanal6 =[0]
+        # datoscanal7 =[0]
+        # datoscanal8 =[0]
 
-        for g in range(0,len(datos),8):
-            datoscanal1= datoscanal1 + datos[g]
-            datoscanal2= datoscanal2 + datos[g+1]
-            datoscanal3= datoscanal3 + datos[g+2]
-            datoscanal4= datoscanal4 + datos[g+3]
-            datoscanal5= datoscanal5 + datos[g+4]
-            datoscanal6= datoscanal6 + datos[g+5]
-            datoscanal7= datoscanal7 + datos[g+6]
-            datoscanal8= datoscanal8 + datos[g+7]
+        # for g in range(0,len(datos),8):
+        #     for h in range(0,512):
+        #         datoscanal1= datoscanal1 + datos[h][g]
+        #         datoscanal2= datoscanal2 + datos[h][g+1]
+        #         datoscanal3= datoscanal3 + datos[h][g+2]
+        #         datoscanal4= datoscanal4 + datos[h][g+3]
+        #         datoscanal5= datoscanal5 + datos[h][g+4]
+        #         datoscanal6= datoscanal6 + datos[h][g+5]
+        #         datoscanal7= datoscanal7 + datos[h][g+6]
+        #         datoscanal8= datoscanal8 + datos[h][g+7]
 
              
-        print("array canal1")
-        print(datoscanal1)
-        print(len(datoscanal1))
-        print("array canal2")
-        print(datoscanal2)
-        print("array canal3")
-        print(datoscanal3)
-        print("array canal4")
-        print(datoscanal4)
-        print("array canal5")
-        print(datoscanal5)
-        print("array canal6")
-        print(datoscanal6)
-        print("array canal7")
-        print(datoscanal7)
-        print("array canal8")
-        print(datoscanal8)
+        # print("array canal1")
+        # print(datoscanal1)
+        # print(len(datoscanal1))
+        # print("array canal2")
+        # print(datoscanal2)
+        # print("array canal3")
+        # print(datoscanal3)
+        # print("array canal4")
+        # print(datoscanal4)
+        # print("array canal5")
+        # print(datoscanal5)
+        # print("array canal6")
+        # print(datoscanal6)
+        # print("array canal7")
+        # print(datoscanal7)
+        # print("array canal8")
+        # print(datoscanal8)
 
         with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
-                for i in range(0,len(datoscanal1)):
-                    fp.write(str(datoscanal1[i])+";")
-                    fp.write(str(datoscanal2[i])+";")
-                    fp.write(str(datoscanal3[i])+";")
-                    fp.write(str(datoscanal4[i])+";")
-                    fp.write(str(datoscanal5[i])+";")
-                    fp.write(str(datoscanal6[i])+";")
-                    fp.write(str(datoscanal7[i])+";")
-                    fp.write(str(datoscanal8[i])+";")
-                    fp.write("\n")
+            for h in range(0,512):
+                for i in range(0,8):
+                    fp.write(str(datos[h][i])+";")
+                fp.write("\n")
+                fila += 1
+                # for i in range(0,len(datoscanal1)):
+                #     fp.write(str(datoscanal1[i])+";")
+                #     fp.write(str(datoscanal2[i])+";")
+                #     fp.write(str(datoscanal3[i])+";")
+                #     fp.write(str(datoscanal4[i])+";")
+                #     fp.write(str(datoscanal5[i])+";")
+                #     fp.write(str(datoscanal6[i])+";")
+                #     fp.write(str(datoscanal7[i])+";")
+                #     fp.write(str(datoscanal8[i])+";")
+                #     fp.write("\n")
             
     
     def Crear_carpeta(self):
