@@ -1,40 +1,45 @@
-
 import sys
 sys.path.append('C:/Python37/Lib/site-packages')
-
 from IPython.display import clear_output
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import random
+from pyOpenBCI import OpenBCICyton
 import threading
 import time
 import numpy as np
 from scipy import signal
-from pyOpenBCI import OpenBCICyton
-# 4500000
+
+pg.setConfigOption('background', 'w')
+pg.setConfigOption('foreground', 'k')
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
-colors = 'rgbycmwr'
+colors = 'rgbycmwrrgbycmwr'
 
 # Set up GUI Layout
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title='Python OpenBCI GUI')
 ts_plots = [win.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(1,9)]
-fft_plot = win.addPlot(row=1, col=2, rowspan=4, title='FFT Plot', labels={'left': 'uV', 'bottom': 'Hz'})
-fft_plot.setLimits(xMin=1,xMax=125, yMin=0, yMax=1e7)
-waves_plot = win.addPlot(row=5, col=2, rowspan=4, title='EEG Bands', labels={'left': 'uV', 'bottom': 'EEG Band'})
-waves_plot.setLimits(xMin=0.5, xMax=5.5, yMin=0)
-waves_xax = waves_plot.getAxis('bottom')
-waves_xax.setTicks([list(zip(range(6), ('', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gama')))])
-data = [[0,0,0,0,0,0,0,0]]
+ts_plots2 = [win.addPlot(row=i-8, col=4, colspan=3, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(9,17)]
+# fft_plot = win.addPlot(row=1, col=3, rowspan=4, title='FFT Plot', labels={'left': 'uV', 'bottom': 'Hz'})
+# fft_plot.setLimits(xMin=1,xMax=400, yMin=0, yMax=1e7)
+# waves_plot = win.addPlot(row=5, col=3, rowspan=4, title='EEG Bands', labels={'left': 'uV', 'bottom': 'EEG Band'})
+# waves_plot.setLimits(xMin=0.5, xMax=5.5, yMin=0)
+# waves_xax = waves_plot.getAxis('bottom')
+# waves_xax.setTicks([list(zip(range(6), ('', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gama')))])
+data = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
 # Define OpenBCI callback function
 def save_data(sample):
     global data
     data.append([i*SCALE_FACTOR for i in sample.channels_data])
+    print("Datos Puros")
+    print(data)
+
+   
 
 # Define function to update the graphs
 def updater():
-    global data, plots, colors
+    global data,colors
     t_data = np.array(data[-1250:]).T #transpose data
     fs = 250 #Hz
 
@@ -54,27 +59,31 @@ def updater():
         return signal.lfilter(b, a, data, axis=0)
 
     # Applying the filters
-    nf_data = [[],[],[],[],[],[],[],[]]
-    bp_nf_data = [[],[],[],[],[],[],[],[]]
+    nf_data = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    bp_nf_data = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
 
-    for i in range(8):
+    for i in range(16):
         nf_data[i] = notch_filter(60, t_data[i])
-        bp_nf_data[i] = bandpass(6, 15, nf_data[i])
+        bp_nf_data[i] = bandpass(15, 80, nf_data[i])
 
     # Plot a time series of the raw data
-    for j in range(8):
-        ts_plots[j].clear()
-        ts_plots[j].plot(pen=colors[j]).setData(t_data[j])
+    for j in range(16):
+        if j<=7:
+            ts_plots[j].clear()
+            ts_plots[j].plot(pen=colors[j]).setData(t_data[j])
+        else:
+            ts_plots2[j-8].clear()
+            ts_plots2[j-8].plot(pen=colors[j]).setData(t_data[j])
 
     # Get an FFT of the data and plot it
-    sp = [[],[],[],[],[],[],[],[]]
-    freq = [[],[],[],[],[],[],[],[]]
+    #sp = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    #freq = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     
-    fft_plot.clear()
-    for k in range(8):
-        sp[k] = np.absolute(np.fft.fft(bp_nf_data[k]))
-        freq[k] = np.fft.fftfreq(bp_nf_data[k].shape[-1], 1.0/fs)
-        fft_plot.plot(pen=colors[k]).setData(freq[k], sp[k])
+    # fft_plot.clear()
+    # for k in range(16):
+    #     sp[k] = np.absolute(np.fft.fft(bp_nf_data[k]))
+    #     freq[k] = np.fft.fftfreq(bp_nf_data[k].shape[-1], 1.0/fs)
+    #     fft_plot.plot(pen=colors[k]).setData(freq[k], sp[k])
 
 
     # Define EEG bands
@@ -95,13 +104,13 @@ def updater():
         eeg_band_fft[band] = np.mean(sp_bands[freq_ix])
 
     # Plot EEG Bands
-    bg1 = pg.BarGraphItem(x=[1,2,3,4,5], height=[eeg_band_fft[band] for band in eeg_bands], width=0.6, brush='r')
-    waves_plot.clear()
-    waves_plot.addItem(bg1)
+    # bg1 = pg.BarGraphItem(x=[1,2,3,4,5], height=[eeg_band_fft[band] for band in eeg_bands], width=0.6, brush='r')
+    # waves_plot.clear()
+    # waves_plot.addItem(bg1)
 
 # Define thread function
 def start_board():
-    board = OpenBCICyton( port='COM8',daisy=True)
+    board = OpenBCICyton( "COM8",daisy=True)
     board.start_stream(save_data)
     
 # Initialize Board and graphing update
@@ -117,5 +126,3 @@ if __name__ == '__main__':
 
 
         QtGui.QApplication.instance().exec_()
-        
-        

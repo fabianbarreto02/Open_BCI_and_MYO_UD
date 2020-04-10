@@ -15,7 +15,7 @@ from pyOpenBCI import OpenBCICyton
 fila= 0
 pg.setConfigOption('background','w')# set white background
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
-colors = 'rgbycmkr'
+colors = 'rgbycmwr'
 
 # Set up GUI Layout
 app = QtGui.QApplication([])
@@ -61,6 +61,7 @@ def Crear_carpeta():
                 print("Archivo Creado")
                 Archivo = False
 
+
 #  Almacenamiento datos csv
 def Guardar_Datos(datos):
     global fila
@@ -74,7 +75,7 @@ def Guardar_Datos(datos):
 # Define function to update the graphs
 def updater():
     global data, colors
-    t_data = np.array(data[-500:]).T #transpose data
+    t_data = np.array(data[-1250:]).T #transpose data
     fs = 250 #Hz
     
     # Notch Filter
@@ -98,7 +99,7 @@ def updater():
 
     for i in range(8):
         nf_data[i] = notch_filter(60, t_data[i])
-        bp_nf_data[i] = bandpass(7,13, t_data[i])
+        bp_nf_data[i] = bandpass(2,80, nf_data[i])
 
     # Plot a time series of the raw data
     for j in range(8):
@@ -160,4 +161,3 @@ if __name__ == '__main__':
         
 
         QtGui.QApplication.instance().exec_()
-    
