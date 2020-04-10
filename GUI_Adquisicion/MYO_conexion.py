@@ -6,7 +6,6 @@ from threading import Lock, Thread
 import myo
 import numpy as np
 import time
-import subprocess
 
 
 class EmgCollector(myo.DeviceListener):
@@ -15,21 +14,25 @@ class EmgCollector(myo.DeviceListener):
   """
 
   def __init__(self, n):
+    print("init_emg")
     self.n = n
     self.lock = Lock()
     self.emg_data_queue = deque(maxlen=n)
     print(self.n)
 
   def get_emg_data(self):
+    print("Get_emg_data")
     with self.lock:
       return list(self.emg_data_queue)
 
   # myo.DeviceListener
 
   def on_connected(self, event):
+    print("on_connected")
     event.device.stream_emg(True)
 
   def on_emg(self, event):
+    print("on_emg")
     with self.lock:
       self.emg_data_queue.append((event.timestamp, event.emg))
 
@@ -37,7 +40,9 @@ class EmgCollector(myo.DeviceListener):
 class Plot(object):
 
   def __init__(self, listener):
+    print("init plot")
     self.n = listener.n
+    print(self.n)
     self.listener = listener
     self.fig = plt.figure()
     self.axes = [self.fig.add_subplot('81' + str(i)) for i in range(1, 9)]
@@ -46,6 +51,7 @@ class Plot(object):
     plt.ion()
 
   def update_plot(self):
+    print("Update")
     emg_data = self.listener.get_emg_data()
     print("data puro")
     print(emg_data)
@@ -66,12 +72,15 @@ class Plot(object):
     plt.draw()
 
   def main(self):
+    print("maii update")
     while True:
       self.update_plot()
+      print("1232334")
       plt.pause(1.0 / 30)
 
 
 def main():
+  print("main")
   myo.init()
   hub = myo.Hub()
   listener = EmgCollector(512)

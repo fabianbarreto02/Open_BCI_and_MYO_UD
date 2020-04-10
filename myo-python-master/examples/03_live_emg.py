@@ -64,13 +64,23 @@ class Plot(object):
     plt.ion()
 
   def update_plot(self):
+    data_total= []
     emg_data = self.listener.get_emg_data()
+    print(emg_data)
     emg_data = np.array([x[1] for x in emg_data]).T
+    print("Transpue datos organizado vector fila")
+    print(len(emg_data))
+    print(emg_data)
     for g, data in zip(self.graphs, emg_data):
       if len(data) < self.n:
         # Fill the left side with zeroes.
         data = np.concatenate([np.zeros(self.n - len(data)), data])
       g.set_ydata(data)
+      print(data)
+      data_total.append(data)
+      print(len(data))
+    print("data total")
+    print(data_total)
     plt.draw()
 
   def main(self):

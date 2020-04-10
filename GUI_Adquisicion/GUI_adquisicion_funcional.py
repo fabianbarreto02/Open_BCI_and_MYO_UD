@@ -25,12 +25,18 @@ import time
 import wx.gizmos as gizmos
 from tkinter import *
 import sys
+import matplotlib.animation as manim
+import threading
 
+# Librerias MYO
 import subprocess
 import os
 from MYO_conexion import *
-import signal
 
+import myo
+
+# Librerias UltraCortex
+from pyOpenBCI import OpenBCICyton
 
 ###########################################################################
 # Class FrameMain
@@ -62,7 +68,7 @@ class FrameMain (wx.Frame):
         Sizer_imagen = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY, wx.Bitmap(
-            u"../../../Downloads/bienvenido.png", wx.BITMAP_TYPE_ANY), wx.DefaultPosition, wx.Size(-1, -1), 0)
+            u"/Users/macfabian/Documents/Desarrollo Tesis/GUI_Adquisicion/bienvenido.png", wx.BITMAP_TYPE_ANY), wx.DefaultPosition, wx.Size(-1, -1), 0)
         Sizer_imagen.Add(self.m_bitmap1, 0, wx.ALIGN_CENTER |
                          wx.ALIGN_BOTTOM, 5)
 
@@ -121,6 +127,8 @@ class FrameMain (wx.Frame):
 ###########################################################################
 # Class FrameObjetivos
 ###########################################################################
+
+
 class FrameObjetivos (wx.Frame):
 
     def __init__(self, parent):
@@ -142,17 +150,18 @@ class FrameObjetivos (wx.Frame):
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText3 = wx.StaticText(
-            self, wx.ID_ANY, u"\n Diseñar un modelo híbrido que relacione las  señales \n mioeléctrica y   las señales encefalográficas para la  \n identificación de gestos  comunes realizados por  un \n miembro superior. \n\n", wx.DefaultPosition, wx.Size(800, -1), 0)
+            self, wx.ID_ANY, u"Diseñar un modelo híbrido que relacione las  señales  mioeléctrica y   las señales encefalográficas para la   identificación de gestos  comunes realizados por  un  miembro superior. ", wx.DefaultPosition, wx.Size(800, 160), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
 
-        bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_BOTTOM | wx.ALIGN_CENTER | wx.ALIGN_CENTER_HORIZONTAL |
+                    wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.ALL | wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.TOP, 0)
 
         bSizer9 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText4 = wx.StaticText(
-            self, wx.ID_ANY, u"Objetivos Especificos", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Objetivos Especificos", wx.DefaultPosition, wx.Size(-1, 50), 0)
         self.m_staticText4.Wrap(-1)
         self.m_staticText4.SetFont(
             wx.Font(34, 70, 90, 90, False, wx.EmptyString))
@@ -161,12 +170,13 @@ class FrameObjetivos (wx.Frame):
 
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"\n - Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. \n -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  \n - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   \n - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  \n encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con \n señales mioeléctricas. \n", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"- Establecer los gestos que serán razón de estudio en el desarrollo del proyecto. \n -Identificar, caracterizar, procesar y analizar las características principales de las  señales mioeléctricas junto a las señales encefalográficas obtenidas en el estudio.  \n - Definir  un modelo conceptual que incluya las señales bioeléctricas relacionadas del miembro  superior.   \n - Realizar un cuadro comparativo donde se compare la efectividad  del modelo relacional ( señales mioeléctricas y  encefalográficas) obtenidos  de los gestos estudiados contra un modelo  ya establecido  de gestos obtenidos con señales mioeléctricas. ", wx.Point(-1, -1), wx.Size(1300, 300), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(22, 70, 90, 90, False, wx.EmptyString))
 
-        bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
+        bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_BOTTOM | wx.ALIGN_CENTER | wx.ALIGN_CENTER_VERTICAL |
+                     wx.ALIGN_TOP | wx.ALL | wx.BOTTOM | wx.FIXED_MINSIZE | wx.LEFT | wx.RIGHT | 0)
 
         bSizer8 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -205,7 +215,7 @@ class FrameObjetivos (wx.Frame):
     def __del__(self):
         pass
 
-        # Virtual event handlers, overide them in your derived class
+    # Virtual event handlers, overide them in your derived class
     def OnClickConcentimiento(self, event):
         self.Close()
         app2 = wx.App()
@@ -220,6 +230,7 @@ class FrameObjetivos (wx.Frame):
 ###########################################################################
 # Class FrameConsentimiento
 ###########################################################################
+
 
 class FrameConsentimiento (wx.Frame):
 
@@ -241,22 +252,23 @@ class FrameConsentimiento (wx.Frame):
 
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n Para continuar con el desarrollo del experimento es \n necesario  que usted, como participante lea \n cuidadosamente el consentimiento  informado \n previamente entregado por el equipo investigador, si \n tiene alguna duda o no entiende alguna palabra del \n consentiento por favor no dude en realizar todas las \n preguntas pertinente al equipo investigador.\n", wx.DefaultPosition, wx.Size(700, -1), 0)
+        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"Para continuar con el desarrollo del experimento es necesario  que usted, como participante lea cuidadosamente el consentimiento  informado previamente entregado por el equipo investigador, si tiene alguna duda o no entiende alguna palabra del consentiento por favor no dude en realizar todas las preguntas pertinente al equipo investigador.", wx.DefaultPosition, wx.Size(720, 270), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
 
-        bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_BOTTOM |
+                    wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         bSizer9 = wx.BoxSizer(wx.VERTICAL)
 
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText5 = wx.StaticText(
-            self, wx.ID_ANY, u"\n \n ¿ Ha leido y comprendido en\n  su totalidad el consentimiento \n informado dado con  anterioridad ? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
+            self, wx.ID_ANY, u"¿ Ha leido y comprendido en su totalidad el consentimiento informado dado con  anterioridad ? ", wx.DefaultPosition, wx.Size(400, 150), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -325,7 +337,7 @@ class FrameCalibracion(wx.Frame):
         bSizer4 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText2 = wx.StaticText(
-            self, wx.ID_ANY, u"Calibración de herramientas", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Calibración de herramientas", wx.DefaultPosition, wx.Size(-1, 80), 0)
         self.m_staticText2.Wrap(-1)
         self.m_staticText2.SetFont(
             wx.Font(34, 70, 90, 90, False, wx.EmptyString))
@@ -335,10 +347,10 @@ class FrameCalibracion(wx.Frame):
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText3 = wx.StaticText(
-            self, wx.ID_ANY, u"\n En esta etapa del proceso el equipo investigador \n procedera a realizar la calibración de la herramienta \n UltraCortex (casco) y la herramienta MYO (brazalete)", wx.DefaultPosition, wx.Size(700, -1), 0)
+            self, wx.ID_ANY, u"En esta etapa del proceso el equipo investigador procedera a realizar la calibración de la herramienta  UltraCortex (casco) y la herramienta MYO (brazalete).", wx.DefaultPosition, wx.Size(700, 280), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(2, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -347,10 +359,10 @@ class FrameCalibracion(wx.Frame):
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText5 = wx.StaticText(
-            self, wx.ID_ANY, u"\n \n  \n \n ¿ Las herramientas ya han sido\n  calibradas en su totalidad  por \n el equipo de investigación? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
+            self, wx.ID_ANY, u"¿ Las herramientas ya han sido  calibradas en su totalidad  por el equipo de investigación? ", wx.DefaultPosition, wx.Size(400, 100), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(4, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -385,14 +397,14 @@ class FrameCalibracion(wx.Frame):
         self.Centre(wx.BOTH)
 
         # Connect Events
-        self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
+        self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickCInstruccion)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
 
     def __del__(self):
         pass
 
     # Virtual event handlers, overide them in your derived class
-    def OnClickConcentimiento(self, event):
+    def OnClickCInstruccion(self, event):
         self.Close()
         app4 = wx.App()
         ventanaInstruccion = FrameInstrucion(None)
@@ -418,7 +430,7 @@ class FrameInstrucion (wx.Frame):
         bSizer4 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText2 = wx.StaticText(
-            self, wx.ID_ANY, u"Instrucciones de toma de señales", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Instrucciones de toma de señales", wx.DefaultPosition, wx.Size(-1, 60), 0)
         self.m_staticText2.Wrap(-1)
         self.m_staticText2.SetFont(
             wx.Font(34, 70, 90, 90, False, wx.EmptyString))
@@ -427,10 +439,10 @@ class FrameInstrucion (wx.Frame):
 
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"\n A continuación usted tendra que realizar una serie de \n gestos con o sin ayuda de elementos que le seran \n brindados por el equipo de investigación, por \n favor lea  con atención y realice el gesto lo mas \n parecido posible  a las imagenes de refencia, tendra \n que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.", wx.DefaultPosition, wx.Size(700, -1), 0)
+        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"A continuación usted tendra que realizar una serie de gestos con o sin ayuda de elementos que le seran brindados por el equipo de investigación, por favor lea  con atención y realice el gesto lo mas parecido posible  a las imagenes de refencia, tendra que realizar los  los gestos las veces definidas y el tiempo que se  le indique el equipo de investigación.", wx.DefaultPosition, wx.Size(700, 280), 0)
         self.m_staticText3.Wrap(-1)
         self.m_staticText3.SetFont(
-            wx.Font(6, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(26, 70, 90, 90, False, wx.EmptyString))
 
         bSizer7.Add(self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -439,10 +451,10 @@ class FrameInstrucion (wx.Frame):
         bSizer10 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText5 = wx.StaticText(
-            self, wx.ID_ANY, u"\n  ¿ Esta de acuerdo con seguir las\n  instruciones definidas por el \n equipo de investigación? \n", wx.DefaultPosition, wx.Size(400, -1), 0)
+            self, wx.ID_ANY, u"¿ Esta de acuerdo con seguir las instruciones definidas por el equipo de investigación? ", wx.DefaultPosition, wx.Size(400, 120), 0)
         self.m_staticText5.Wrap(-1)
         self.m_staticText5.SetFont(
-            wx.Font(4, 70, 90, 90, False, wx.EmptyString))
+            wx.Font(24, 70, 90, 90, False, wx.EmptyString))
 
         bSizer10.Add(self.m_staticText5, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -508,22 +520,22 @@ global i
 i = 0
 global c
 c = 0
-global t_eeg
-t_eeg = np.arange(0.0, 3.0, 0.01)
-
-global data_eeg
-data_eeg = np.sin(10 * np.pi * t_eeg)
+SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
+data = [[0,0,0,0,0,0,0,0]]
 
 
 class FrameGesto1 (wx.Frame):
+
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Captura de señales para el gesto 1",
-                          pos=wx.DefaultPosition, size=wx.Size(1400, 700), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          pos=wx.DefaultPosition, size=wx.Size(1400, 800), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
-
         bSizer4 = wx.BoxSizer(wx.VERTICAL)
+        self.panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
+        self.panel.SetSizer(sizer)
         self.m_staticText2 = wx.StaticText(
             self, wx.ID_ANY, u"Captura de señales para el primer gesto \n", wx.DefaultPosition, wx.Size(700, -1), 0)
         self.m_staticText2.Wrap(-1)
@@ -558,7 +570,8 @@ class FrameGesto1 (wx.Frame):
 
         self.m_animCtrl1 = AnimationCtrl(self, pos=(
             40, 40), size=(24, 24), name="AnimationCtrl")
-        self.m_animCtrl1.LoadFile(u"/Users/macfabian/Desktop/manos.gif")
+        self.m_animCtrl1.LoadFile(
+            u"/Users/macfabian/Documents/Desarrollo Tesis/GUI_Adquisicion/manos.gif")
         self.m_animCtrl1.Play()
         self.m_animCtrl1.SetMinSize(wx.Size(200, -1))
 
@@ -567,43 +580,56 @@ class FrameGesto1 (wx.Frame):
         bSizer49.Add(bSizer50, 1, 0, 5)
 
         bSizer51 = wx.BoxSizer(wx.VERTICAL)
+        bSizer57 = wx.BoxSizer(wx.HORIZONTAL)
+
+        # grafica EMG
+        self.figureEMG = plt.figure(figsize=(1, 7), dpi=60)
+        self.axes = [self.figureEMG.add_subplot(
+            '81' + str(i)) for i in range(1, 9)]    
+        self.n = 512
+        [(ax.set_ylim(ymin=-200, ymax=200) )for ax in self.axes]
+        global graphs
+        self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[
+                               0] for ax in self.axes]
+        plt.ion()
+        self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
+        bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
+
+        # grafica EEG
+        self.figureEEG = plt.figure(figsize=(1, 7), dpi=60)
+        self.axesEEG = [self.figureEEG.add_subplot(
+            '81' + str(i)) for i in range(1, 9)]
+        [(ax.set_ylim([-150, 150])) for ax in self.axesEEG]
+        self.m = 1250
+        self.graphsEEG = [ax.plot(np.arange(self.m), np.zeros(self.m))[
+                               0] for ax in self.axesEEG]
+        plt.ion()
+        self.canvasEEG = FigureCanvas(self, -1, self.figureEEG)
+        bSizer57.Add(self.canvasEEG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
+
+        bSizer51.Add(bSizer57, 1, wx.EXPAND, 5)
+
+        bSizer49.Add(bSizer51, 1, wx.EXPAND, 5)
+
+        bSizer53 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_staticText31 = wx.StaticText(
-            self, wx.ID_ANY, u"Señal EMG", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Señal EMG", wx.DefaultPosition, wx.Size(700, 30), 0)
         self.m_staticText31.Wrap(-1)
         self.m_staticText31.SetFont(
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
-        bSizer51.Add(self.m_staticText31, 0, wx.ALL, 5)
 
-
-        self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axes = self.figure.add_subplot(111)
-        t = np.arange(0.0, 3.0, 0.01)
-        s = np.sin(2 * np.pi * t)
-        self.axes.plot(t, s)
-        self.canvas = FigureCanvas(self, -1, self.figure)
-        bSizerEMG = wx.BoxSizer(wx.VERTICAL)
-        bSizerEMG.Add(self.canvas, 1, wx.TOP | wx.LEFT | wx.EXPAND)
-        bSizer49.Add(bSizerEMG, 1, wx.EXPAND, 5)
-        bSizer49.Add(bSizer51, 1, wx.EXPAND, 5)
-
-        bSizer53 = wx.BoxSizer(wx.VERTICAL)
+        bSizer53.Add(self.m_staticText31, 0, wx.LEFT, 5)
 
         self.m_staticText32 = wx.StaticText(
-            self, wx.ID_ANY, u"Señal EEG", wx.DefaultPosition, wx.DefaultSize, 0)
+            self, wx.ID_ANY, u"Señal EEG", wx.DefaultPosition, wx.Size(-1, 30), 0)
         self.m_staticText32.Wrap(-1)
         self.m_staticText32.SetFont(
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
-        self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axes = self.figure.add_subplot(111)
-        self.axes.plot(t_eeg, data_eeg)
-        self.canvas = FigureCanvas(self, -1, self.figure)
-        bSizerEEG = wx.BoxSizer(wx.VERTICAL)
-        bSizerEEG.Add(self.canvas, 1, wx.TOP | wx.LEFT | wx.EXPAND)
-        bSizer49.Add(bSizerEEG, 1, wx.EXPAND, 5)
-        bSizer53.Add(self.m_staticText32, 0, wx.ALL, 5)
 
-        bSizer49.Add(bSizer53, 1, wx.EXPAND, 5)
+        bSizer53.Add(self.m_staticText32, 0, 0, 5)
+
+        bSizer49.Add(bSizer53, 1, 0, 5)
 
         bSizer8 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -614,7 +640,7 @@ class FrameGesto1 (wx.Frame):
             wx.Font(18, 70, 90, 90, False, wx.EmptyString))
         bSizer8.Add(self.m_staticText33, 0, wx.ALL, 5)
         pos = wx.DefaultPosition
-        size = wx.DefaultSize
+        size = wx.Size(1, 11)
         style = gizmos.LED_ALIGN_CENTER
         self.led = gizmos.LEDNumberCtrl(self, -1, pos, size, style)
         self.led.SetBackgroundColour("white")
@@ -650,11 +676,35 @@ class FrameGesto1 (wx.Frame):
         self.m_button32.Bind(wx.EVT_BUTTON, self.OnClickInicio)
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
-
+        # Arrancar conexion myo
+        # self.conexionMYO()
+        def hiloMYOConexion(arg):
+            hiloConexionMYO = threading.currentThread()
+            while getattr(hiloConexionMYO, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainMYO()
+            print("Stopping as you wish.")
+        self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
+        # self.hiloConexionMYO.start()
+        # Arranca conexion UltraCortex
+        self.start_board()
+        def hiloUltracortesConexion(arg):
+            hiloUltracortesConexion = threading.currentThread()
+            while getattr(hiloUltracortesConexion, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainULTRACORTEX()
+            print("Stopping as you wish.")
+        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion.start()
+        
     def __del__(self):
         pass
 
-    # Virtual event handlers, overide them in your derived class
+
+# Virtual event handlers, overide them in your derived class
+    def OnClickInicio(self, event):
+        self.GetSegundos(None)
+
     def OnClickConcentimiento(self, event):
         event.Skip()
 
@@ -662,39 +712,58 @@ class FrameGesto1 (wx.Frame):
         self.Close()
         sys.exit()
 
-    def OnClickInicio(self, event):
-        global i
-        global procesoEMG
-        global procesoEEG
-        i = 0
-        procesoEMG = subprocess.Popen("python MYO_conexion.py", shell=True)
-        procesoEEG = subprocess.Popen("python ULTRACORTEX_conexion.py", shell= True)
-        self.led.SetValue("0:00")
-        self.OnTimer(None, e=10)
-        
     
 
+    def GetSegundos(self, e):
+        global segundos
+        dlg = wx.TextEntryDialog(self.panel, 'Ingrese los segundos a grabar el gesto:',"Captura del gesto","", 
+                style=wx.OK)
+        dlg.ShowModal()
+        segundos = int(dlg.GetValue()) 
+        
+        def hiloRunTimmer(arg):
+            hiloRunTimmer = threading.currentThread()
+            while getattr(hiloRunTimmer, "do_run", True):
+                    print("working on %s" % arg)
+                    self.led.SetValue("00:00")
+                    self.OnTimer(None, e=segundos)
+            print("Stopping as you wish.")
+        self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
+        self.hiloRunTimmer.start()
+
+
+        def hiloMYOSaved(arg):
+            hiloMYOSaved = threading.currentThread()
+            while getattr(hiloMYOSaved, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainSavedMYO()
+            print("Stopping as you wish.")
+        self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
+        self.hiloMYOSaved.start()
+
+        dlg.Destroy()
+
     def OnTimer(self, event, e):
-        global procesoEMG
+        print("OnTimmer Inicia")
         global i
         global c
         c = e
-        print("entro On Timmer c")
-        print(c)
-        print("ojo i")
-        print(i)
         if(i < c):
-            print("entro if")
-            print(i)
-            i += 1
-            self.timer = wx.Timer(self, -1)
-            self.timer.Start(1000)
-            self.Bind(wx.EVT_TIMER, self.TimerGo)
+            i += 1   
+            time.sleep(1)
+            self.TimerGo(None)
+            
+            
         else:
-            print("stop")
-            self.timer.Stop()
-            os.killpg(os.getpgid(procesoEMG.pid), signal.SIGTERM)
-
+            print("Termino Timer")
+            self.hiloRunTimmer.do_run = False
+            # self.stopconexion= True
+            # self.hiloConexionMYO.do_run = False
+            # self.hiloConexionMYO.join()
+            # self.stopsaved= True
+            # self.hiloMYOSaved.do_run = False
+            # self.hiloMYOSaved.join()
+                 
 
     def TimerGo(self, event):
         global s
@@ -716,8 +785,135 @@ class FrameGesto1 (wx.Frame):
         if(int(s) > 9):
             s = str(s)
         t = str(m) + ":" + str(s)
-        print("Timmer")
-        print(t)
         self.led.SetValue(t)
-        self.OnTimer(None , c)
+        self.OnTimer(None, c)
+
+    def conexionMYO(self):
+        print("Realizando Conexión MYO")
+        myo.init()
+        self.hub = myo.Hub()
+        self.listener = EmgCollector(512)
+        self.stopconexion = False
+        self.stopsaved = False
+        print("Conexión MYO Establecida")
+        self.Crear_carpeta()
+        
+
+    def mainMYO(self):
+        global data_total
+        data_total = []
+        with self.hub.run_in_background(self.listener.on_event):
+            while True:
+                self.plotMYO()
+                time.sleep(0.1)
+                if (self.stopconexion == True):
+                    break
     
+    def mainSavedMYO(self):
+        global fila
+        fila = 0
+        with self.hub.run_in_background(self.listener.on_event):
+            while True:
+                self.SaveMYO()
+                time.sleep(2.56)
+                if (self.stopsaved == True):
+                    break
+    
+    def plotMYO(self):
+        global graphs
+        emg_data = self.listener.get_emg_data()
+        emg_data = np.array([x[1] for x in emg_data]).T
+        for g, data in zip(self.graphs, emg_data):
+            if len(data) < self.n:
+                data = np.concatenate([np.zeros(self.n - len(data)), data])
+            g.set_ydata(data)
+        plt.draw()
+    
+    def SaveMYO(self):
+        global fila
+        global data_total
+        numMuestras = 512
+        emg_data = self.listener.get_emg_data()
+        print("datos saved originales")
+        print(emg_data)
+        emg_data = [x[1] for x in emg_data]
+        print("datos saved")
+        print(emg_data)
+        self.Guardar_Datos(emg_data)
+    
+    # Ultracortex
+    def start_board():
+        board = OpenBCICyton(port='COM8', daisy=False)
+    
+    def mainULTRACORTEX(self):
+        while True:
+            board.start_stream(save_data)
+            # time.sleep(0.1)
+            if (self.stopconexion == True):
+                break
+
+    def save_data(sample):
+        global data
+        data.append([i*SCALE_FACTOR for i in sample.channels_data])
+        print("Datos Puros")
+        print(data)       
+    
+    def Guardar_Datos(self, datos):
+
+        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
+            for h in range(0,512):
+                for i in range(0,8):
+                    fp.write(str(datos[h][i])+";")
+                fp.write("\n")
+            
+    
+    def Crear_carpeta(self):
+        global carpeta 
+        global j
+        global fila
+        fila = 0
+        Archivo = True
+        j = 1
+        Tipo = "PruebaMYO"
+        carpeta = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpeta):
+            os.mkdir(carpeta)
+
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpeta + "/datos %d.csv"% j):
+                print('El archivo existe.')
+                j+=1
+            else:
+                with open(os.path.join(carpeta, "datos %d.csv"% j), 'w') as fp:
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado")
+                    Archivo = False
+    
+                                    
+    
+    
+
+class EmgCollector(myo.DeviceListener):
+  """
+  Collects EMG data in a queue with *n* maximum number of elements.
+  """
+
+  def __init__(self, n):
+    self.n = n
+    self.lock = Lock()
+    self.emg_data_queue = deque(maxlen=n)
+
+  def get_emg_data(self):
+    with self.lock:
+      return list(self.emg_data_queue)
+
+  # myo.DeviceListener
+
+  def on_connected(self, event):
+    event.device.stream_emg(True)
+
+  def on_emg(self, event):
+    with self.lock:
+      self.emg_data_queue.append((event.timestamp, event.emg))
+
