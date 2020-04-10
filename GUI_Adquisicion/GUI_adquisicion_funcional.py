@@ -28,14 +28,15 @@ import sys
 import matplotlib.animation as manim
 import threading
 
-
+# Librerias MYO
 import subprocess
 import os
 from MYO_conexion import *
-import signal
 
 import myo
 
+# Librerias UltraCortex
+from pyOpenBCI import OpenBCICyton
 
 ###########################################################################
 # Class FrameMain
@@ -519,11 +520,8 @@ global i
 i = 0
 global c
 c = 0
-global t_eeg
-t_eeg = np.arange(0.0, 3.0, 0.01)
-
-global data_eeg
-data_eeg = np.sin(10 * np.pi * t_eeg)
+SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
+data = [[0,0,0,0,0,0,0,0]]
 
 
 class FrameGesto1 (wx.Frame):
@@ -587,9 +585,9 @@ class FrameGesto1 (wx.Frame):
         # grafica EMG
         self.figureEMG = plt.figure(figsize=(1, 7), dpi=60)
         self.axes = [self.figureEMG.add_subplot(
-            '81' + str(i)) for i in range(1, 9)]
-        [(ax.set_ylim([-100, 100])) for ax in self.axes]
+            '81' + str(i)) for i in range(1, 9)]    
         self.n = 512
+        [(ax.set_ylim(ymin=-200, ymax=200) )for ax in self.axes]
         global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[
                                0] for ax in self.axes]
@@ -598,17 +596,15 @@ class FrameGesto1 (wx.Frame):
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
-        self.figure = Figure(figsize=(1, 2), dpi=80)
-        self.axesE = self.figure.add_subplot(811)
-        self.axesE = self.figure.add_subplot(812)
-        self.axesE = self.figure.add_subplot(813)
-        self.axesE = self.figure.add_subplot(814)
-        self.axesE = self.figure.add_subplot(815)
-        self.axesE = self.figure.add_subplot(816)
-        self.axesE = self.figure.add_subplot(817)
-        self.axesE = self.figure.add_subplot(818)
-        # self.axes.plot(t_eeg, data_eeg)
-        self.canvasEEG = FigureCanvas(self, -1, self.figure)
+        self.figureEEG = plt.figure(figsize=(1, 7), dpi=60)
+        self.axesEEG = [self.figureEEG.add_subplot(
+            '81' + str(i)) for i in range(1, 9)]
+        [(ax.set_ylim([-150, 150])) for ax in self.axesEEG]
+        self.m = 1250
+        self.graphsEEG = [ax.plot(np.arange(self.m), np.zeros(self.m))[
+                               0] for ax in self.axesEEG]
+        plt.ion()
+        self.canvasEEG = FigureCanvas(self, -1, self.figureEEG)
         bSizer57.Add(self.canvasEEG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         bSizer51.Add(bSizer57, 1, wx.EXPAND, 5)
@@ -681,7 +677,7 @@ class FrameGesto1 (wx.Frame):
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
-        self.conexionMYO()
+        # self.conexionMYO()
         def hiloMYOConexion(arg):
             hiloConexionMYO = threading.currentThread()
             while getattr(hiloConexionMYO, "do_run", True):
@@ -689,7 +685,17 @@ class FrameGesto1 (wx.Frame):
                     self.mainMYO()
             print("Stopping as you wish.")
         self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
-        self.hiloConexionMYO.start()
+        # self.hiloConexionMYO.start()
+        # Arranca conexion UltraCortex
+        self.start_board()
+        def hiloUltracortesConexion(arg):
+            hiloUltracortesConexion = threading.currentThread()
+            while getattr(hiloUltracortesConexion, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainULTRACORTEX()
+            print("Stopping as you wish.")
+        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion.start()
         
     def __del__(self):
         pass
@@ -751,12 +757,12 @@ class FrameGesto1 (wx.Frame):
         else:
             print("Termino Timer")
             self.hiloRunTimmer.do_run = False
-            self.stopconexion= True
-            self.hiloConexionMYO.do_run = False
-            self.hiloConexionMYO.join()
-            self.stopsaved= True
-            self.hiloMYOSaved.do_run = False
-            self.hiloMYOSaved.join()
+            # self.stopconexion= True
+            # self.hiloConexionMYO.do_run = False
+            # self.hiloConexionMYO.join()
+            # self.stopsaved= True
+            # self.hiloMYOSaved.do_run = False
+            # self.hiloMYOSaved.join()
                  
 
     def TimerGo(self, event):
@@ -834,7 +840,23 @@ class FrameGesto1 (wx.Frame):
         print("datos saved")
         print(emg_data)
         self.Guardar_Datos(emg_data)
-       
+    
+    # Ultracortex
+    def start_board():
+        board = OpenBCICyton(port='COM8', daisy=False)
+    
+    def mainULTRACORTEX(self):
+        while True:
+            board.start_stream(save_data)
+            # time.sleep(0.1)
+            if (self.stopconexion == True):
+                break
+
+    def save_data(sample):
+        global data
+        data.append([i*SCALE_FACTOR for i in sample.channels_data])
+        print("Datos Puros")
+        print(data)       
     
     def Guardar_Datos(self, datos):
 
