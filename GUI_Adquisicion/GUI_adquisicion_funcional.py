@@ -602,7 +602,7 @@ class FrameGesto1 (wx.Frame):
         self.figureEEG = plt.figure(figsize=(1, 7), dpi=60)
         self.axesEEG = [self.figureEEG.add_subplot(
             '81' + str(i)) for i in range(1, 9)]
-        [(ax.set_ylim([100000,117000])) for ax in self.axesEEG]
+        [(ax.set_ylim([-100000,117000])) for ax in self.axesEEG]
         self.m = 100
         self.graphsEEG = [ax.plot(np.arange(self.m), np.zeros(self.m))[
                                0] for ax in self.axesEEG]
@@ -692,16 +692,15 @@ class FrameGesto1 (wx.Frame):
         # Arranca conexion UltraCortex
         self.datosEEG = []
         self.start_board()
-        def hiloUltracortesConexion(arg):
-            hiloUltracortesConexion = threading.currentThread()
-            while getattr(hiloUltracortesConexion, "do_run", True):
+        def hiloPlotUltracortex(arg):
+            hiloPlotUltracortex = threading.currentThread()
+            while getattr(hiloPlotUltracortex, "do_run", True):
                     print("working on %s" % arg)
-                    self.mainULTRACORTEX()
+                    self.mainplotUltracortex()
             print("Stopping as you wish.")
-        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
-        self.hiloUltracortesConexion.daemon = True
-        self.hiloUltracortesConexion.start()
-        
+        self.hiloPlotUltracortex = threading.Thread(target=hiloPlotUltracortex,args=("PLOT_EEG_ULTRACORTEX",))
+        #self.hiloPlotUltracortex.start()
+       
     def __del__(self):
         pass
 
@@ -746,6 +745,16 @@ class FrameGesto1 (wx.Frame):
         self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
         self.hiloMYOSaved.start()
 
+        def hiloUltracortesConexion(arg):
+            hiloUltracortesConexion = threading.currentThread()
+            while getattr(hiloUltracortesConexion, "do_run", True):
+                    print("working on %s" % arg)
+                    self.mainULTRACORTEX()
+            print("Stopping as you wish.")
+        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion.start()
+        
+
         dlg.Destroy()
 
     def OnTimer(self, event, e):
@@ -768,6 +777,10 @@ class FrameGesto1 (wx.Frame):
             # self.stopsaved= True
             # self.hiloMYOSaved.do_run = False
             # self.hiloMYOSaved.join()
+            self.board.stop_stream()
+            self.stopconexioUltracortex = True
+            self.hiloUltracortesConexion.do_run = False
+            self.hiloUltracortesConexion.join()
                  
 
     def TimerGo(self, event):
@@ -851,15 +864,37 @@ class FrameGesto1 (wx.Frame):
         global fila
         fila=0
         self.board = OpenBCICyton(port='COM8', daisy=False)
+        self.stopconexioUltracortex= False
         self.Crear_carpeta()
         
     
     def mainULTRACORTEX(self):
-        while True:
+        while (self.stopconexioUltracortex == False):
             self.board.start_stream(self.save_data)
             time.sleep(0.05)
-            #if (self.stopconexion == True):
-             #   break
+    
+        print("entro if")
+        self.board.stop_stream()
+    
+
+    def mainplotUltracortex(self):
+        while (self.stopconexioUltracortex==False):
+            time.sleep(0.1)
+            self.board.start_stream(self.plot_eeg)
+    
+    def plot_eeg(self, sample):
+        global datosEEG,bp_a,bp_b
+        global graphsEEG
+        self.datosEEG.append([i*(SCALE_FACTOR) for i in sample.channels_data])
+        datosEEGplot = np.array(self.datosEEG).T
+        for g, data in zip(self.graphsEEG, datosEEGplot):
+            if len(data) < self.m:
+                data = np.concatenate([np.zeros(self.m - len(data)), data])              
+            else:
+                data = np.array(data[(len(data)-self.m):])
+            g.set_ydata(data)
+        plt.draw()
+        self.board.stop_stream()
 
 
     def save_data(self, sample):
@@ -879,18 +914,6 @@ class FrameGesto1 (wx.Frame):
             fp.write("\n")
             fila+= 1
     
-        
-        for g, data in zip(self.graphsEEG, datosEEGplot):
-            if len(data) < self.m:
-                data = np.concatenate([np.zeros(self.m - len(data)), data])
-                
-            else:
-                data = np.array(data[(len(data)-self.m):])
-                # print(data)
-            # data=signal.lfilter(bp_b,bp_a,data)
-            # print(data)
-            g.set_ydata(data)
-        plt.draw()
     
     def Guardar_Datos(self, datos):
 
@@ -926,7 +949,12 @@ class FrameGesto1 (wx.Frame):
     
                                     
     
-
+# class UltraCortex():
+#     def __init__(self):
+#         self.board= OpenBCICyton(port='COM8', daisy=False)
+#     def get_eeg_data(self):
+#         self.board.start_stream(save_data)
+#         return list(se)
 
 class EmgCollector(myo.DeviceListener):
   """

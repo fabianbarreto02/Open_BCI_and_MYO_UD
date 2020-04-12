@@ -1,10 +1,12 @@
 import time
 import psutil
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 fig=plt.figure()
 ax=fig.add_subplot(111)
 i=0
 x,y=[],[]
+
 while True:
     x.append(i)
     y.append(psutil.cpu_percent())
