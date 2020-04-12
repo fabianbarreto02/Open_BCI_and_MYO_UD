@@ -3,9 +3,21 @@ sys.path.append('C:/Python37/Lib/site-packages')
 from IPython.display import clear_output
 import csv
 import os
+import wx
+#----MATPLOTLIB-----------------------
+from wx.adv import Animation, AnimationCtrl
+import matplotlib
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
+from matplotlib.backends.backend_wx import _load_bitmap
+from matplotlib.figure import Figure
+#----PYQT5----------------------------
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import random
+
 from pyOpenBCI import OpenBCICyton
 import threading
 import time
@@ -13,6 +25,7 @@ import numpy as np
 from scipy import signal
 from pyOpenBCI import OpenBCICyton
 #---------------------------------Declaracion de variables------------------------------
+t=0
 fs=250                                # frecuencia de muestreo
 fila= 0                               #Fila de el dato actual obtenido del OpenBCI
 pg.setConfigOption('background','w')  # Fondo blanco
@@ -27,14 +40,14 @@ for freq_Hz in np.nditer(notch_freq_Hz):
     n_b, n_a = signal.butter(3, bp_stop_Hz / (fs / 2.0), 'bandstop')
 #PASABANDA DE 7-13Hz
 bp_Hz = np.array([7, 13])
-bp_b, bp_a = signal.butter(5, bp_Hz / (fs / 2.0), btype='bandpass')
+bp_b, bp_a = signal.butter(2, bp_Hz / (fs / 2.0), btype='bandpass')
 # LLAMAR signal.lfilter(b,a,datos) para aplicar la funcion de transferencia del filtro a un arreglo
 
 #-----------------------GUI-----------------------------------
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title='Python OpenBCI GUI')
 ts_plots = [win.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(1,9)]
-
+#-----------------------MATPLOTLIB----------------------------
 
 #------------------------DEFINICION DE FUNCIONES----------------------------------------------
 def save_data(sample): # Funcion de callback
@@ -77,11 +90,9 @@ def updater():
     t_data = np.array(data[-1250:]).T #transpose data
     nf_data = [[],[],[],[],[],[],[],[]]
     bp_nf_data = [[],[],[],[],[],[],[],[]]
-
     for i in range(8):
         nf_data[i] = signal.lfilter(n_b,n_a, t_data[i])
         bp_nf_data[i]= signal.lfilter(bp_b,bp_a, nf_data[i])
-
     # Plot a time series of the raw data
     for j in range(8):
         ts_plots[j].clear()

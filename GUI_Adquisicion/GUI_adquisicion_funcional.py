@@ -21,6 +21,7 @@ import wx.lib.mixins.inspection as wit
 from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
 from matplotlib.backends.backend_wx import _load_bitmap
 from matplotlib.figure import Figure
+from scipy import signal
 import time
 import wx.gizmos as gizmos
 from tkinter import *
@@ -521,7 +522,9 @@ i = 0
 global c
 c = 0
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
-data = [[0,0,0,0,0,0,0,0]]
+data_eeg = [[0,0,0,0,0,0,0,0]]
+bp_Hz = np.array([7, 13])
+bp_b, bp_a = signal.butter(2, bp_Hz / (250 / 2.0), btype='bandpass')
 
 
 class FrameGesto1 (wx.Frame):
@@ -599,8 +602,8 @@ class FrameGesto1 (wx.Frame):
         self.figureEEG = plt.figure(figsize=(1, 7), dpi=60)
         self.axesEEG = [self.figureEEG.add_subplot(
             '81' + str(i)) for i in range(1, 9)]
-        [(ax.set_ylim([-150, 150])) for ax in self.axesEEG]
-        self.m = 1250
+        [(ax.set_ylim([100000,117000])) for ax in self.axesEEG]
+        self.m = 100
         self.graphsEEG = [ax.plot(np.arange(self.m), np.zeros(self.m))[
                                0] for ax in self.axesEEG]
         plt.ion()
@@ -687,6 +690,7 @@ class FrameGesto1 (wx.Frame):
         self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
         # self.hiloConexionMYO.start()
         # Arranca conexion UltraCortex
+        self.datosEEG = []
         self.start_board()
         def hiloUltracortesConexion(arg):
             hiloUltracortesConexion = threading.currentThread()
@@ -695,6 +699,7 @@ class FrameGesto1 (wx.Frame):
                     self.mainULTRACORTEX()
             print("Stopping as you wish.")
         self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion.daemon = True
         self.hiloUltracortesConexion.start()
         
     def __del__(self):
@@ -840,23 +845,52 @@ class FrameGesto1 (wx.Frame):
         print("datos saved")
         print(emg_data)
         self.Guardar_Datos(emg_data)
-    
+    ###########################################################################
     # Ultracortex
-    def start_board():
-        board = OpenBCICyton(port='COM8', daisy=False)
+    def start_board(self):
+        global fila
+        fila=0
+        self.board = OpenBCICyton(port='COM8', daisy=False)
+        self.Crear_carpeta()
+        
     
     def mainULTRACORTEX(self):
         while True:
-            board.start_stream(save_data)
-            # time.sleep(0.1)
-            if (self.stopconexion == True):
-                break
+            self.board.start_stream(self.save_data)
+            time.sleep(0.05)
+            #if (self.stopconexion == True):
+             #   break
 
-    def save_data(sample):
-        global data
-        data.append([i*SCALE_FACTOR for i in sample.channels_data])
-        print("Datos Puros")
-        print(data)       
+
+    def save_data(self, sample):
+        #print("entro")
+        global fila
+        global datosEEG,bp_a,bp_b
+        global graphsEEG
+        self.datosEEG.append([i*(SCALE_FACTOR) for i in sample.channels_data])
+        #print("Len data:", len(self.datosEEG))
+        datosEEGplot = np.array(self.datosEEG).T
+        #print(self.datosEEG)
+       
+   
+        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+            for i in range(0,8):
+                fp.write(str(self.datosEEG[fila][i])+";")
+            fp.write("\n")
+            fila+= 1
+    
+        
+        for g, data in zip(self.graphsEEG, datosEEGplot):
+            if len(data) < self.m:
+                data = np.concatenate([np.zeros(self.m - len(data)), data])
+                
+            else:
+                data = np.array(data[(len(data)-self.m):])
+                # print(data)
+            # data=signal.lfilter(bp_b,bp_a,data)
+            # print(data)
+            g.set_ydata(data)
+        plt.draw()
     
     def Guardar_Datos(self, datos):
 
@@ -892,7 +926,7 @@ class FrameGesto1 (wx.Frame):
     
                                     
     
-    
+
 
 class EmgCollector(myo.DeviceListener):
   """
