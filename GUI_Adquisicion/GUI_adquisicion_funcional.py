@@ -531,7 +531,7 @@ class FrameGesto1 (wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Captura de señales para el gesto 1",
-                          pos=wx.DefaultPosition, size=wx.Size(1400, 800), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          pos=wx.DefaultPosition, size=wx.Size(1400, 1000), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
         bSizer4 = wx.BoxSizer(wx.VERTICAL)
@@ -551,7 +551,7 @@ class FrameGesto1 (wx.Frame):
 
         bSizer50 = wx.BoxSizer(wx.HORIZONTAL)
 
-        bSizer50.SetMinSize(wx.Size(700, -1))
+        bSizer50.SetMinSize(wx.Size(700, 50))
         self.m_staticText30 = wx.StaticText(
             self, wx.ID_ANY, u"Para iniciar el experimento por favor observe \n ", wx.DefaultPosition, wx.Size(1000, -1), 0)
         self.m_staticText30.Wrap(-1)
@@ -572,9 +572,9 @@ class FrameGesto1 (wx.Frame):
         bSizer50.Add(bSizer52, 1, 0, 5)
 
         self.m_animCtrl1 = AnimationCtrl(self, pos=(
-            40, 40), size=(24, 24), name="AnimationCtrl")
+            40, 40), size=(14, 14), name="AnimationCtrl")
         self.m_animCtrl1.LoadFile(
-            u"/Users/macfabian/Documents/Desarrollo Tesis/GUI_Adquisicion/manos.gif")
+            r"C:\Users\crist\OneDrive\Escritorio\Universidad\LASER\Tesis\Open_BCI_and_MYO_UD\GUI_Adquisicion/manos.gif")
         self.m_animCtrl1.Play()
         self.m_animCtrl1.SetMinSize(wx.Size(200, -1))
 
@@ -586,7 +586,7 @@ class FrameGesto1 (wx.Frame):
         bSizer57 = wx.BoxSizer(wx.HORIZONTAL)
 
         # grafica EMG
-        self.figureEMG = plt.figure(figsize=(1, 7), dpi=60)
+        self.figureEMG = plt.figure(figsize=(1, 6), dpi=60)
         self.axes = [self.figureEMG.add_subplot(
             '81' + str(i)) for i in range(1, 9)]    
         self.n = 512
@@ -594,12 +594,12 @@ class FrameGesto1 (wx.Frame):
         global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[
                                0] for ax in self.axes]
-        plt.ion()
+        #plt.ion()
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
         # grafica EEG
-        self.figureEEG = plt.figure(figsize=(1, 7), dpi=60)
+        self.figureEEG = plt.figure(figsize=(1, 6), dpi=60)
         self.axesEEG = [self.figureEEG.add_subplot(
             '81' + str(i)) for i in range(1, 9)]
         [(ax.set_ylim([-100000,117000])) for ax in self.axesEEG]
@@ -699,7 +699,7 @@ class FrameGesto1 (wx.Frame):
                     self.mainplotUltracortex()
             print("Stopping as you wish.")
         self.hiloPlotUltracortex = threading.Thread(target=hiloPlotUltracortex,args=("PLOT_EEG_ULTRACORTEX",))
-        #self.hiloPlotUltracortex.start()
+        self.hiloPlotUltracortex.start()
        
     def __del__(self):
         pass
@@ -751,7 +751,7 @@ class FrameGesto1 (wx.Frame):
                     print("working on %s" % arg)
                     self.mainULTRACORTEX()
             print("Stopping as you wish.")
-        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("SAVE_EEG_ULTRACORTEX",))
         self.hiloUltracortesConexion.start()
         
 
@@ -781,6 +781,8 @@ class FrameGesto1 (wx.Frame):
             self.stopconexioUltracortex = True
             self.hiloUltracortesConexion.do_run = False
             self.hiloUltracortesConexion.join()
+            self.hiloPlotUltracortex.do_run = False
+            self.hiloPlotUltracortex.join()
                  
 
     def TimerGo(self, event):
@@ -871,15 +873,14 @@ class FrameGesto1 (wx.Frame):
     def mainULTRACORTEX(self):
         while (self.stopconexioUltracortex == False):
             self.board.start_stream(self.save_data)
-            time.sleep(0.05)
-    
+            
         print("entro if")
         self.board.stop_stream()
     
 
     def mainplotUltracortex(self):
         while (self.stopconexioUltracortex==False):
-            time.sleep(0.1)
+            time.sleep(0.3)
             self.board.start_stream(self.plot_eeg)
     
     def plot_eeg(self, sample):
@@ -893,21 +894,15 @@ class FrameGesto1 (wx.Frame):
             else:
                 data = np.array(data[(len(data)-self.m):])
             g.set_ydata(data)
-        plt.draw()
-        self.board.stop_stream()
+        #plt.draw()
+        #self.board.stop_stream()
 
 
     def save_data(self, sample):
-        #print("entro")
         global fila
         global datosEEG,bp_a,bp_b
-        global graphsEEG
         self.datosEEG.append([i*(SCALE_FACTOR) for i in sample.channels_data])
-        #print("Len data:", len(self.datosEEG))
         datosEEGplot = np.array(self.datosEEG).T
-        #print(self.datosEEG)
-       
-   
         with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
             for i in range(0,8):
                 fp.write(str(self.datosEEG[fila][i])+";")
@@ -948,13 +943,6 @@ class FrameGesto1 (wx.Frame):
                     Archivo = False
     
                                     
-    
-# class UltraCortex():
-#     def __init__(self):
-#         self.board= OpenBCICyton(port='COM8', daisy=False)
-#     def get_eeg_data(self):
-#         self.board.start_stream(save_data)
-#         return list(se)
 
 class EmgCollector(myo.DeviceListener):
   """

@@ -33,6 +33,8 @@ data = [[0,0,0,0,0,0,0,0]]
 def save_data(sample):
     global data
     global fila
+    print("Data")
+    print(data)
     data.append([i*SCALE_FACTOR for i in sample.channels_data])
     # print("Datos Puros")
     # print(data)
