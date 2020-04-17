@@ -5,16 +5,8 @@ import csv
 import os
 import wx
 #----MATPLOTLIB-----------------------
-from wx.adv import Animation, AnimationCtrl
-import matplotlib
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
-from matplotlib.backends.backend_wx import _load_bitmap
-from matplotlib.figure import Figure
 #----PYQT5----------------------------
-from pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore,QtWidgets
 import pyqtgraph as pg
 import random
 
@@ -40,7 +32,8 @@ for freq_Hz in np.nditer(notch_freq_Hz):
     n_b, n_a = signal.butter(3, bp_stop_Hz / (fs / 2.0), 'bandstop')
 #PASABANDA DE 7-13Hz
 bp_Hz = np.array([7, 13])
-bp_b, bp_a = signal.butter(2, bp_Hz / (fs / 2.0), btype='bandpass')
+bp_b, bp_a = signal.butter(3, bp_Hz / (fs / 2.0), btype='bandpass')
+
 # LLAMAR signal.lfilter(b,a,datos) para aplicar la funcion de transferencia del filtro a un arreglo
 
 #-----------------------GUI-----------------------------------

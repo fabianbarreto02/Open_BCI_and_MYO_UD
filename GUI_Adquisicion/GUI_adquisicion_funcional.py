@@ -33,6 +33,7 @@ import threading
 import subprocess
 import os
 from MYO_conexion import *
+from time import clock
 
 import myo
 
@@ -594,7 +595,7 @@ class FrameGesto1 (wx.Frame):
         global graphs
         self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[
                                0] for ax in self.axes]
-        #plt.ion()
+        plt.ion()
         self.canvEMG = FigureCanvas(self, wx.ID_ANY, self.figureEMG)
         bSizer57.Add(self.canvEMG, 1, wx.TOP | wx.LEFT | wx.EXPAND)
 
@@ -602,7 +603,7 @@ class FrameGesto1 (wx.Frame):
         self.figureEEG = plt.figure(figsize=(1, 6), dpi=60)
         self.axesEEG = [self.figureEEG.add_subplot(
             '81' + str(i)) for i in range(1, 9)]
-        [(ax.set_ylim([-100000,117000])) for ax in self.axesEEG]
+        [(ax.set_ylim([-150000,150000])) for ax in self.axesEEG]
         self.m = 100
         self.graphsEEG = [ax.plot(np.arange(self.m), np.zeros(self.m))[
                                0] for ax in self.axesEEG]
@@ -680,7 +681,7 @@ class FrameGesto1 (wx.Frame):
         self.button_siguiente.Bind(wx.EVT_BUTTON, self.OnClickConcentimiento)
         self.button_salir.Bind(wx.EVT_BUTTON, self.OnClickSalir)
         # Arrancar conexion myo
-        # self.conexionMYO()
+        self.conexionMYO()
         def hiloMYOConexion(arg):
             hiloConexionMYO = threading.currentThread()
             while getattr(hiloConexionMYO, "do_run", True):
@@ -688,7 +689,8 @@ class FrameGesto1 (wx.Frame):
                     self.mainMYO()
             print("Stopping as you wish.")
         self.hiloConexionMYO = threading.Thread(target=hiloMYOConexion,args=("PLOT_EMG_MYO",))
-        # self.hiloConexionMYO.start()
+        self.hiloConexionMYO.setDaemon(True)
+        self.hiloConexionMYO.start()
         # Arranca conexion UltraCortex
         self.datosEEG = []
         self.start_board()
@@ -696,9 +698,11 @@ class FrameGesto1 (wx.Frame):
             hiloPlotUltracortex = threading.currentThread()
             while getattr(hiloPlotUltracortex, "do_run", True):
                     print("working on %s" % arg)
+                    time.sleep(3)
                     self.mainplotUltracortex()
             print("Stopping as you wish.")
         self.hiloPlotUltracortex = threading.Thread(target=hiloPlotUltracortex,args=("PLOT_EEG_ULTRACORTEX",))
+        self.hiloPlotUltracortex.setDaemon(True)
         self.hiloPlotUltracortex.start()
        
     def __del__(self):
@@ -720,6 +724,13 @@ class FrameGesto1 (wx.Frame):
 
     def GetSegundos(self, e):
         global segundos
+        self.board.stop_stream()
+        self.stopconexioUltracortexPlot = True
+        self.hiloPlotUltracortex.do_run = False
+        self.hiloPlotUltracortex.join()
+        self.stopconexion= True
+        self.hiloConexionMYO.do_run = False
+        self.hiloConexionMYO.join()
         dlg = wx.TextEntryDialog(self.panel, 'Ingrese los segundos a grabar el gesto:',"Captura del gesto","", 
                 style=wx.OK)
         dlg.ShowModal()
@@ -733,6 +744,7 @@ class FrameGesto1 (wx.Frame):
                     self.OnTimer(None, e=segundos)
             print("Stopping as you wish.")
         self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
+        self.hiloRunTimmer.setDaemon(True)
         self.hiloRunTimmer.start()
 
 
@@ -743,6 +755,7 @@ class FrameGesto1 (wx.Frame):
                     self.mainSavedMYO()
             print("Stopping as you wish.")
         self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
+        self.hiloMYOSaved.setDaemon(True)
         self.hiloMYOSaved.start()
 
         def hiloUltracortesConexion(arg):
@@ -752,8 +765,10 @@ class FrameGesto1 (wx.Frame):
                     self.mainULTRACORTEX()
             print("Stopping as you wish.")
         self.hiloUltracortesConexion = threading.Thread(target=hiloUltracortesConexion,args=("SAVE_EEG_ULTRACORTEX",))
+        self.hiloUltracortesConexion.setDaemon(True)
         self.hiloUltracortesConexion.start()
-        
+
+  
 
         dlg.Destroy()
 
@@ -770,19 +785,16 @@ class FrameGesto1 (wx.Frame):
             
         else:
             print("Termino Timer")
-            self.hiloRunTimmer.do_run = False
-            # self.stopconexion= True
-            # self.hiloConexionMYO.do_run = False
-            # self.hiloConexionMYO.join()
-            # self.stopsaved= True
-            # self.hiloMYOSaved.do_run = False
-            # self.hiloMYOSaved.join()
             self.board.stop_stream()
             self.stopconexioUltracortex = True
             self.hiloUltracortesConexion.do_run = False
             self.hiloUltracortesConexion.join()
-            self.hiloPlotUltracortex.do_run = False
-            self.hiloPlotUltracortex.join()
+            self.hiloRunTimmer.do_run = False
+            self.stopsaved= True
+            self.hiloMYOSaved.do_run = False
+            self.hiloMYOSaved.join()
+            
+          
                  
 
     def TimerGo(self, event):
@@ -816,7 +828,7 @@ class FrameGesto1 (wx.Frame):
         self.stopconexion = False
         self.stopsaved = False
         print("Conexión MYO Establecida")
-        self.Crear_carpeta()
+        self.Crear_carpetaMYO()
         
 
     def mainMYO(self):
@@ -847,19 +859,19 @@ class FrameGesto1 (wx.Frame):
             if len(data) < self.n:
                 data = np.concatenate([np.zeros(self.n - len(data)), data])
             g.set_ydata(data)
-        plt.draw()
+        #plt.draw()
     
     def SaveMYO(self):
         global fila
         global data_total
         numMuestras = 512
         emg_data = self.listener.get_emg_data()
-        print("datos saved originales")
-        print(emg_data)
         emg_data = [x[1] for x in emg_data]
-        print("datos saved")
-        print(emg_data)
-        self.Guardar_Datos(emg_data)
+        with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
+            for h in range(0,512):
+                for i in range(0,8):
+                    fp.write(str(emg_data[h][i])+";")
+                fp.write("\n")
     ###########################################################################
     # Ultracortex
     def start_board(self):
@@ -867,7 +879,8 @@ class FrameGesto1 (wx.Frame):
         fila=0
         self.board = OpenBCICyton(port='COM8', daisy=False)
         self.stopconexioUltracortex= False
-        self.Crear_carpeta()
+        self.stopconexioUltracortexPlot= False
+        self.Crear_carpetaEEG()
         
     
     def mainULTRACORTEX(self):
@@ -879,23 +892,29 @@ class FrameGesto1 (wx.Frame):
     
 
     def mainplotUltracortex(self):
-        while (self.stopconexioUltracortex==False):
-            time.sleep(0.3)
+        while (self.stopconexioUltracortexPlot==False):
+            time.sleep(0.1)
             self.board.start_stream(self.plot_eeg)
+        print("entro if")
+        self.board.stop_stream()
     
     def plot_eeg(self, sample):
         global datosEEG,bp_a,bp_b
         global graphsEEG
         self.datosEEG.append([i*(SCALE_FACTOR) for i in sample.channels_data])
         datosEEGplot = np.array(self.datosEEG).T
+        # for o in range (8):
+        #    datosEEGplot[o] = signal.lfilter(bp_b, bp_a, datosEEGplot[o]) 
         for g, data in zip(self.graphsEEG, datosEEGplot):
-            if len(data) < self.m:
+            if len(data) < self.m: 
                 data = np.concatenate([np.zeros(self.m - len(data)), data])              
             else:
                 data = np.array(data[(len(data)-self.m):])
+            # dy = (max(data) - min(data))*0.7
+            # [(ax.set_ylim([min(data)-dy, max(data)+dy])) for ax in self.axesEEG]
             g.set_ydata(data)
-        #plt.draw()
-        #self.board.stop_stream()
+        #plt.draw()>:V
+        self.board.stop_stream()
 
 
     def save_data(self, sample):
@@ -903,40 +922,55 @@ class FrameGesto1 (wx.Frame):
         global datosEEG,bp_a,bp_b
         self.datosEEG.append([i*(SCALE_FACTOR) for i in sample.channels_data])
         datosEEGplot = np.array(self.datosEEG).T
-        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+        with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
             for i in range(0,8):
                 fp.write(str(self.datosEEG[fila][i])+";")
             fp.write("\n")
             fila+= 1
-    
-    
-    def Guardar_Datos(self, datos):
 
-        with open(os.path.join(carpeta, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
-            for h in range(0,512):
-                for i in range(0,8):
-                    fp.write(str(datos[h][i])+";")
-                fp.write("\n")
             
     
-    def Crear_carpeta(self):
-        global carpeta 
+    def Crear_carpetaEEG(self):
+        global carpetaEEG 
+        global j
+        global fila
+        fila = 0
+        Archivo = True
+        j = 1
+        Tipo = "PruebaUltracortex"
+        carpetaEEG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpetaEEG):
+            os.mkdir(carpetaEEG)
+
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpetaEEG + "/datos %d.csv"% j):
+                print('El archivo existe.')
+                j+=1
+            else:
+                with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'w') as fp:
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado")
+                    Archivo = False
+    
+    def Crear_carpetaMYO(self):
+        global carpetaEMG 
         global j
         global fila
         fila = 0
         Archivo = True
         j = 1
         Tipo = "PruebaMYO"
-        carpeta = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
-        if not os.path.exists(carpeta):
-            os.mkdir(carpeta)
+        carpetaEMG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpetaEMG):
+            os.mkdir(carpetaEMG)
 
         while(Archivo == True):# Se crea un archivo csv en caso de que no exista
-            if os.path.isfile(carpeta + "/datos %d.csv"% j):
+            if os.path.isfile(carpetaEMG + "/datos %d.csv"% j):
                 print('El archivo existe.')
                 j+=1
             else:
-                with open(os.path.join(carpeta, "datos %d.csv"% j), 'w') as fp:
+                with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'w') as fp:
                     [fp.write('CH%d ;'%i)for i in range(1,9)]
                     fp.write("\n")
                     print("Archivo Creado")
