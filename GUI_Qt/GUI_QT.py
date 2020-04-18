@@ -13,6 +13,7 @@ import time
 import numpy as np
 from scipy import signal
 from pyqtgraph import PlotWidget
+import os
 
 # Librerias Myo
 import myo
@@ -26,11 +27,14 @@ pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
 data = [[0,0,0,0,0,0,0,0]]
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
-colors = 'rgbycmwr'
+colors = 'bbbbbbbb'
 i = 0
 s = 0
 m = 0
 t = 0
+fila = 0 
+inittimer = False
+prueba = 0
 
 
 class Ui_MainWindow(object):
@@ -134,8 +138,25 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Timer</span></p></body></html>"))
 ##############################################################################################################################
     def save_data_EEG(self, sample):
-        global data
+        global data , fila , inittimer
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
+        fila+= 1
+        # if (inittimer== True):
+        #     with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+        #         for i in range(0,8):
+        #             fp.write(str(data[fila][i])+";")
+        #         fp.write("\n")
+
+    def save_csv_emg(self):
+        global prueba, fila, data, c
+
+        with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+            for  k in range(prueba, prueba+(250*int(c))):
+                for i in range(0,8):
+                    fp.write(str(data[k][i])+";")
+                fp.write("\n")
+
+   
     
     def updater_EEG(self):
         global data, plots, colors
@@ -154,26 +175,30 @@ class Ui_MainWindow(object):
         self.listener = EmgCollector(512)
         self.stopconexion = False
         self.stopsaved = False
+        print(self.listener)
         print("Conexión MYO Establecida")
-        #self.Crear_carpetaMYO()
+        self.Crear_carpetaMYO()
     
     def updater_EMG(self):
         global colors
-        emg_data = self.listener.get_emg_data()
-        #emg_data = np.array([x[1] for x in emg_data]).T
-        emg_data = np.array([2 , 3 , 4 , 5 ,6 ,7,8,9], dtype=np.int64)
-        #print(emg_data)
-        for j in range(8):
-            #print(emg_data[j])
-            self.ts_plots_emg[j].clear()
-        #     # self.ts_plots[j].plot(t_data[j])
-            #self.ts_plots_emg[j].plot(pen=colors[j]).setData(emg_data[j])
-    
+        with self.hub.run_in_background(self.listener.on_event):
+            emg_data = self.listener.get_emg_data()
+            emg_data = np.array([x[1] for x in emg_data]).T
+            #emg_data = np.array([2 , 3 , 4 , 5 ,6 ,7,8,9], dtype=np.int64)
+            print("Updater")
+
+            for g, data in zip(range(8), emg_data):
+                if len(data) < 512:
+                    data = np.concatenate([np.zeros(512 - len(data)), data])  
+                self.ts_plots_emg[g].clear()    
+                self.ts_plots_emg[g].plot(pen=colors[g]).setData(emg_data[g])
+        
+        
     def close_application(self):
         sys.exit()
 
     def inittimer(self):
-        print(self.textEdit.toPlainText())
+        global inittimer, prueba
         if not self.textEdit.toPlainText():
             print("El QLineEdit esta vacio")
             msg = QMessageBox()
@@ -183,6 +208,8 @@ class Ui_MainWindow(object):
             msg.setInformativeText("Por favor ingrese los segundos!")
             msg.exec()
         else:
+            inittimer =True
+            prueba = fila
             def hiloRunTimmer(arg):
                 hiloRunTimmer = threading.currentThread()
                 while getattr(hiloRunTimmer, "do_run", True):
@@ -192,10 +219,12 @@ class Ui_MainWindow(object):
             self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
             self.hiloRunTimmer.setDaemon(True)
             self.hiloRunTimmer.start()
+            
+
 
     
     def OnTimer(self, event, e):
-        global i
+        global i , inittimer, fila, prueba
         global c
         c = e
         if(i < int(c)):
@@ -211,6 +240,9 @@ class Ui_MainWindow(object):
             # self.hiloUltracortesConexion.do_run = False
             # self.hiloUltracortesConexion.join()
             self.hiloRunTimmer.do_run = False
+            inittimer = False
+            print(fila- prueba)
+            self.save_csv_emg()
             # self.stopsaved= True
             # self.hiloMYOSaved.do_run = False
             # self.hiloMYOSaved.join()
@@ -237,12 +269,62 @@ class Ui_MainWindow(object):
         t = str(m) + ":" + str(s)
         self.lcdNumber.display(t)
         self.OnTimer(None, c)
+    
+    ######################### Metodos de aguardar datos
+
+    def Crear_carpetaEEG(self):
+        global carpetaEEG 
+        global j
+        global fila
+        fila = 0
+        Archivo = True
+        j = 1
+        Tipo = "PruebaUltracortex"
+        carpetaEEG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpetaEEG):
+            os.mkdir(carpetaEEG)
+
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpetaEEG + "/datos %d.csv"% j):
+                print('El archivo existe.')
+                j+=1
+            else:
+                with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'w') as fp:
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado")
+                    Archivo = False
+    
+    def Crear_carpetaMYO(self):
+        global carpetaEMG 
+        global j
+        global fila
+        fila = 0
+        Archivo = True
+        j = 1
+        Tipo = "PruebaMYO"
+        carpetaEMG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
+        if not os.path.exists(carpetaEMG):
+            os.mkdir(carpetaEMG)
+
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpetaEMG + "/datos %d.csv"% j):
+                print('El archivo existe.')
+                j+=1
+            else:
+                with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'w') as fp:
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado")
+                    Archivo = False
+    
         
 
 
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
+    ui.Crear_carpetaEEG()
     board = OpenBCICyton( "COM8", daisy= False)
     board.start_stream(ui.save_data_EEG)
 
@@ -288,11 +370,11 @@ if __name__ == "__main__":
         ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        #hilo_conexion_ultracortes.start()
+        hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
         timerEEG.start(0)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(0)
+        timerEMG.start(2.56)
         sys.exit(app.exec_())
