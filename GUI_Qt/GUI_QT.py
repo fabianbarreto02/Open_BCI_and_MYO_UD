@@ -19,6 +19,7 @@ import os
 import myo
 from collections import deque
 from threading import Lock, Thread
+import datetime
 
 ##########################################################
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -59,9 +60,11 @@ class Ui_MainWindow(object):
         self.pushButton_2.setGeometry(QtCore.QRect(20, 530, 131, 41))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.inittimer)
+        self.pushButton_2.setEnabled(False)
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(10, 60, 141, 41))
+        self.pushButton_3.setGeometry(QtCore.QRect(10, 20, 141, 41))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.clicked.connect(self.carpeta_gesto)
 
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralwidget)
         self.lcdNumber.setGeometry(QtCore.QRect(20, 230, 111, 61))
@@ -118,6 +121,19 @@ class Ui_MainWindow(object):
         self.label_6.setGeometry(QtCore.QRect(40, 290, 81, 41))
         self.label_6.setObjectName("label_6")
 
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
+        self.label_7.setGeometry(QtCore.QRect(10,73,141,20))
+        self.label_7.setObjectName("label_7")
+
+        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBox.setGeometry(QtCore.QRect(10, 100, 141, 22))
+        self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
 
@@ -126,17 +142,69 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Primer Gesto"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Captura gesto"))
         self.pushButton.setText(_translate("MainWindow", "SALIR"))
         self.pushButton_2.setText(_translate("MainWindow", "INICIO"))
-        self.pushButton_3.setText(_translate("MainWindow", "ACTUALIZAR"))
+        self.pushButton_3.setText(_translate("MainWindow", "INICIAR SESIÓN"))
         self.label.setText(_translate("MainWindow", "SEGUNDOS"))
         self.pushButton_4.setText(_translate("MainWindow", "SIGUIENTE"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_4.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EMG 8 Canales</p></body></html>"))
         self.label_6.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Timer</span></p></body></html>"))
+        self.label_7.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Seleccione el gesto </span></p></body></html>"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "Gesto_1"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "Gesto_2"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "Gesto_3"))
+        self.comboBox.setItemText(3, _translate("MainWindow", "Gesto_4"))
+        self.comboBox.setItemText(4, _translate("MainWindow", "Gesto_5"))
 ##############################################################################################################################
+    def carpeta_gesto(self):
+        global carpetaEEG 
+        global carpetaEMG
+        global j
+        Archivo = True
+        j = 1
+        self.lcdNumber.display("0:00")
+        self.pushButton_2.setEnabled(True)
+        nombre_capeta = self.comboBox.currentText()
+        carpetaEEG = self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX"
+        carpetaEMG = self.comboBox.currentText()+"/" + "Datos_CSV_MYO"
+        if not os.path.exists(nombre_capeta):
+            os.makedirs(self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX" )
+            os.mkdir(self.comboBox.currentText()+"/" + "Datos_CSV_MYO" )
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpetaEEG + "/datos_%d.csv"% j):
+                j+=1 
+            else:
+                with open(os.path.join(carpetaEEG, "datos_%d.csv"% j), 'w') as fp:
+                    fp.write("Año;Mes;Dia; Hora")
+                    fp.write("\n")
+                    fp.write(datetime.datetime.now().strftime("%Y;%m;%d;%H-%M-%S"))
+                    fp.write("\n")
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado EEG")
+                    Archivo = False 
+        Archivo = True            
+        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
+            if os.path.isfile(carpetaEMG + "/datos_%d.csv"% j):
+                j+=1
+            else:
+                with open(os.path.join(carpetaEMG, "datos_%d.csv"% j), 'w') as fp:
+                    fp.write("Año;Mes;Dia; Hora")
+                    fp.write("\n")
+                    fp.write(datetime.datetime.now().strftime("%Y;%m;%d;%H-%M-%S"))
+                    fp.write("\n")
+                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    fp.write("\n")
+                    print("Archivo Creado EMG")
+                    Archivo = False
+
+        
+     
+
+    
     def save_data_EEG(self, sample):
         global data , fila , inittimer
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
@@ -148,6 +216,25 @@ class Ui_MainWindow(object):
         #         fp.write("\n")
 
     def save_csv_emg(self):
+        with self.hub.run_in_background(self.listener.on_event):
+            while True:
+                print("lnsclb<vlzkbkzbvlkbdlvkblkdvhlkdhvlkzhvkldzlkvhdzklvgklzgholzghflkgdskgsiougskjgskjgjkz")
+                self.SaveMYO()
+                time.sleep(2.56)
+                if (self.stopsaved == True):
+                    break
+    
+    def SaveMYO(self):
+        emg_data = self.listener.get_emg_data()
+        emg_data = [x[1] for x in emg_data]
+        with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
+            for h in range(0,512):
+                for i in range(0,8):
+                    fp.write(str(emg_data[h][i])+";")
+                fp.write("\n")
+
+
+    def save_csv_eeg(self):
         global prueba, fila, data, c
 
         with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
@@ -210,6 +297,17 @@ class Ui_MainWindow(object):
         else:
             inittimer =True
             prueba = fila
+
+            def hiloMYOSaved(arg):
+                hiloMYOSaved = threading.currentThread()
+                while getattr(hiloMYOSaved, "do_run", True):
+                        print("working on %s" % arg)
+                        self.save_csv_emg()
+                print("Stopping as you wish.")
+            self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
+            self.hiloMYOSaved.setDaemon(True)
+            #self.hiloMYOSaved.start()
+
             def hiloRunTimmer(arg):
                 hiloRunTimmer = threading.currentThread()
                 while getattr(hiloRunTimmer, "do_run", True):
@@ -219,13 +317,15 @@ class Ui_MainWindow(object):
             self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
             self.hiloRunTimmer.setDaemon(True)
             self.hiloRunTimmer.start()
+
+     
             
 
 
     
     def OnTimer(self, event, e):
         global i , inittimer, fila, prueba
-        global c
+        global c , s
         c = e
         if(i < int(c)):
             i += 1   
@@ -235,17 +335,19 @@ class Ui_MainWindow(object):
             
         else:
             print("Termino Timer")
-            # self.board.stop_stream()
             # self.stopconexioUltracortex = True
             # self.hiloUltracortesConexion.do_run = False
             # self.hiloUltracortesConexion.join()
             self.hiloRunTimmer.do_run = False
             inittimer = False
             print(fila- prueba)
-            self.save_csv_emg()
-            # self.stopsaved= True
-            # self.hiloMYOSaved.do_run = False
-            # self.hiloMYOSaved.join()
+            #self.save_csv_eeg()
+            #self.stopsaved= True
+            #self.hiloMYOSaved.do_run = False
+            #self.hiloMYOSaved.join()
+            i = 0 
+            s = 0
+            self.pushButton_2.setEnabled(False)
     
     def TimerGo(self, event):
         global s
@@ -367,14 +469,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        ui.conexionMYO()
+        #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        hilo_conexion_ultracortes.start()
+        #hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(0)
+        #timerEEG.start(0)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(2.56)
+        #timerEMG.start(2.56)
         sys.exit(app.exec_())
