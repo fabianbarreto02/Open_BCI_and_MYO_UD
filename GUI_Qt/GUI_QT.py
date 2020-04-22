@@ -21,6 +21,12 @@ from collections import deque
 from threading import Lock, Thread
 import datetime
 
+
+# Plot final
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
 ##########################################################
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget, GraphicsLayoutWidget
@@ -53,7 +59,7 @@ class Ui_MainWindow(object):
         self.ts_plots = [self.graphicsView.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(1,9)]
 
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(20, 630, 131, 41))
+        self.pushButton.setGeometry(QtCore.QRect(20, 660, 131, 41))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.close_application)
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
@@ -73,6 +79,15 @@ class Ui_MainWindow(object):
         self.lcdNumber.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
         self.lcdNumber.setObjectName("lcdNumber")
         self.lcdNumber.display("0:00")
+
+
+        self.lcdNumber1 = QtWidgets.QLCDNumber(self.centralwidget)
+        self.lcdNumber1.setGeometry(QtCore.QRect(110,190,32,25))
+        self.lcdNumber1.setSmallDecimalPoint(True)
+        self.lcdNumber1.setDigitCount(2)
+        self.lcdNumber1.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.lcdNumber1.setObjectName("lcdNumber1")
+        self.lcdNumber1.display("--")
 
 
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -95,8 +110,15 @@ class Ui_MainWindow(object):
 
 
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(20, 580, 131, 41))
+        self.pushButton_4.setGeometry(QtCore.QRect(20, 619, 131, 41))
         self.pushButton_4.setObjectName("pushButton_4")
+
+        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_5.setGeometry(QtCore.QRect(20, 575, 131, 41))
+        self.pushButton_5.setObjectName("pushButton_5")
+        self.pushButton_5.setEnabled(True)
+        self.pushButton_5.clicked.connect(self.plot_final)
+
 
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(310, 660, 101, 41))
@@ -124,6 +146,15 @@ class Ui_MainWindow(object):
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
         self.label_7.setGeometry(QtCore.QRect(10,73,141,20))
         self.label_7.setObjectName("label_7")
+        
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        self.label_8.setGeometry(QtCore.QRect(15,190,141,20))
+        self.label_8.setObjectName("label_8")
+        
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(110,190,141,20))
+        self.label_9.setObjectName("label_9")
+
 
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(10, 100, 141, 22))
@@ -148,11 +179,13 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "INICIAR SESIÓN"))
         self.label.setText(_translate("MainWindow", "SEGUNDOS"))
         self.pushButton_4.setText(_translate("MainWindow", "SIGUIENTE"))
+        self.pushButton_5.setText(_translate("MainWindow", "PLOT"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_4.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EMG 8 Canales</p></body></html>"))
         self.label_6.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Timer</span></p></body></html>"))
         self.label_7.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Seleccione el gesto </span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:11pt; font-weight:600;\">Sesión numero: </span></p></body></html>"))
         self.comboBox.setItemText(0, _translate("MainWindow", "Gesto_1"))
         self.comboBox.setItemText(1, _translate("MainWindow", "Gesto_2"))
         self.comboBox.setItemText(2, _translate("MainWindow", "Gesto_3"))
@@ -185,6 +218,8 @@ class Ui_MainWindow(object):
                     [fp.write('CH%d ;'%i)for i in range(1,9)]
                     fp.write("\n")
                     print("Archivo Creado EEG")
+                    self.lcdNumber1.display(str(j))
+                    self.lcdNumber.repaint()
                     Archivo = False 
         Archivo = True            
         while(Archivo == True):# Se crea un archivo csv en caso de que no exista
@@ -200,6 +235,8 @@ class Ui_MainWindow(object):
                     fp.write("\n")
                     print("Archivo Creado EMG")
                     Archivo = False
+        
+        
 
         
      
@@ -264,7 +301,6 @@ class Ui_MainWindow(object):
         self.stopsaved = False
         print(self.listener)
         print("Conexión MYO Establecida")
-        self.Crear_carpetaMYO()
     
     def updater_EMG(self):
         global colors
@@ -283,6 +319,19 @@ class Ui_MainWindow(object):
         
     def close_application(self):
         sys.exit()
+
+    def plot_final(self):
+        current_dir = os.path.dirname(os.path.realpath(__file__)) 
+        filenameemg = os.path.join(current_dir, "Gesto_1/Datos_CSV_MYO/datos_1.csv") 
+        print(filenameemg)
+        data_emg = pd.read_csv(filenameemg, delimiter=';')
+        data_emg.dropna(axis=1,inplace=True)
+        print(data_emg)
+        labels={'CH1 ', 'CH2 ', 'CH3 ', 'CH4 ', 'CH5 ', 'CH6 ', 'CH7 ', 'CH8 '}
+        plt.figure(figsize=(20,20))
+        data_emg.plot()
+        plt.legend(loc="upper right")
+        plt.show()
 
     def inittimer(self):
         global inittimer, prueba
@@ -374,59 +423,8 @@ class Ui_MainWindow(object):
     
     ######################### Metodos de aguardar datos
 
-    def Crear_carpetaEEG(self):
-        global carpetaEEG 
-        global j
-        global fila
-        fila = 0
-        Archivo = True
-        j = 1
-        Tipo = "PruebaUltracortex"
-        carpetaEEG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
-        if not os.path.exists(carpetaEEG):
-            os.mkdir(carpetaEEG)
-
-        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
-            if os.path.isfile(carpetaEEG + "/datos %d.csv"% j):
-                print('El archivo existe.')
-                j+=1
-            else:
-                with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'w') as fp:
-                    [fp.write('CH%d ;'%i)for i in range(1,9)]
-                    fp.write("\n")
-                    print("Archivo Creado")
-                    Archivo = False
-    
-    def Crear_carpetaMYO(self):
-        global carpetaEMG 
-        global j
-        global fila
-        fila = 0
-        Archivo = True
-        j = 1
-        Tipo = "PruebaMYO"
-        carpetaEMG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
-        if not os.path.exists(carpetaEMG):
-            os.mkdir(carpetaEMG)
-
-        while(Archivo == True):# Se crea un archivo csv en caso de que no exista
-            if os.path.isfile(carpetaEMG + "/datos %d.csv"% j):
-                print('El archivo existe.')
-                j+=1
-            else:
-                with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'w') as fp:
-                    [fp.write('CH%d ;'%i)for i in range(1,9)]
-                    fp.write("\n")
-                    print("Archivo Creado")
-                    Archivo = False
-    
-        
-
-
-
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    ui.Crear_carpetaEEG()
     board = OpenBCICyton( "COM8", daisy= False)
     board.start_stream(ui.save_data_EEG)
 
