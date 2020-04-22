@@ -82,7 +82,7 @@ class Ui_MainWindow(object):
 
 
         self.lcdNumber1 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber1.setGeometry(QtCore.QRect(110,190,32,25))
+        self.lcdNumber1.setGeometry(QtCore.QRect(130,190,32,25))
         self.lcdNumber1.setSmallDecimalPoint(True)
         self.lcdNumber1.setDigitCount(2)
         self.lcdNumber1.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -116,7 +116,7 @@ class Ui_MainWindow(object):
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(20, 575, 131, 41))
         self.pushButton_5.setObjectName("pushButton_5")
-        self.pushButton_5.setEnabled(True)
+        self.pushButton_5.setEnabled(False)
         self.pushButton_5.clicked.connect(self.plot_final)
 
 
@@ -246,26 +246,20 @@ class Ui_MainWindow(object):
         global data , fila , inittimer
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
         fila+= 1
-        # if (inittimer== True):
-        #     with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
-        #         for i in range(0,8):
-        #             fp.write(str(data[fila][i])+";")
-        #         fp.write("\n")
 
     def save_csv_emg(self):
         with self.hub.run_in_background(self.listener.on_event):
             while True:
-                print("lnsclb<vlzkbkzbvlkbdlvkblkdvhlkdhvlkzhvkldzlkvhdzklvgklzgholzghflkgdskgsiougskjgskjgjkz")
                 self.SaveMYO()
-                time.sleep(2.56)
+                time.sleep(1)
                 if (self.stopsaved == True):
                     break
     
     def SaveMYO(self):
         emg_data = self.listener.get_emg_data()
         emg_data = [x[1] for x in emg_data]
-        with open(os.path.join(carpetaEMG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
-            for h in range(0,512):
+        with open(os.path.join(carpetaEMG, "datos_%d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv
+            for h in range(312,512):
                 for i in range(0,8):
                     fp.write(str(emg_data[h][i])+";")
                 fp.write("\n")
@@ -274,7 +268,7 @@ class Ui_MainWindow(object):
     def save_csv_eeg(self):
         global prueba, fila, data, c
 
-        with open(os.path.join(carpetaEEG, "datos %d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
+        with open(os.path.join(carpetaEEG, "datos_%d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
             for  k in range(prueba, prueba+(250*int(c))):
                 for i in range(0,8):
                     fp.write(str(data[k][i])+";")
@@ -304,11 +298,12 @@ class Ui_MainWindow(object):
     
     def updater_EMG(self):
         global colors
+        global emg_data
         with self.hub.run_in_background(self.listener.on_event):
             emg_data = self.listener.get_emg_data()
             emg_data = np.array([x[1] for x in emg_data]).T
             #emg_data = np.array([2 , 3 , 4 , 5 ,6 ,7,8,9], dtype=np.int64)
-            print("Updater")
+            print("\r")
 
             for g, data in zip(range(8), emg_data):
                 if len(data) < 512:
@@ -321,16 +316,19 @@ class Ui_MainWindow(object):
         sys.exit()
 
     def plot_final(self):
+        global j , carpetaEEG ,carpetaEMG
         current_dir = os.path.dirname(os.path.realpath(__file__)) 
-        filenameemg = os.path.join(current_dir, "Gesto_1/Datos_CSV_MYO/datos_1.csv") 
+        filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j) 
         print(filenameemg)
-        data_emg = pd.read_csv(filenameemg, delimiter=';')
+        data_emg = pd.read_csv(filenameemg, delimiter=';', skiprows= 2)
         data_emg.dropna(axis=1,inplace=True)
-        print(data_emg)
         labels={'CH1 ', 'CH2 ', 'CH3 ', 'CH4 ', 'CH5 ', 'CH6 ', 'CH7 ', 'CH8 '}
-        plt.figure(figsize=(20,20))
+        current_dir_eeg = os.path.dirname(os.path.realpath(__file__)) 
+        filenameeeg = os.path.join(current_dir_eeg, carpetaEEG + "/datos_%d.csv" %j) 
+        data_eeg = pd.read_csv(filenameeeg, delimiter=';', skiprows= 2)
+        data_eeg.dropna(axis=1,inplace=True)
+        data_eeg.plot()
         data_emg.plot()
-        plt.legend(loc="upper right")
         plt.show()
 
     def inittimer(self):
@@ -355,7 +353,7 @@ class Ui_MainWindow(object):
                 print("Stopping as you wish.")
             self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
             self.hiloMYOSaved.setDaemon(True)
-            #self.hiloMYOSaved.start()
+            self.hiloMYOSaved.start()
 
             def hiloRunTimmer(arg):
                 hiloRunTimmer = threading.currentThread()
@@ -384,19 +382,18 @@ class Ui_MainWindow(object):
             
         else:
             print("Termino Timer")
-            # self.stopconexioUltracortex = True
-            # self.hiloUltracortesConexion.do_run = False
-            # self.hiloUltracortesConexion.join()
             self.hiloRunTimmer.do_run = False
             inittimer = False
             print(fila- prueba)
-            #self.save_csv_eeg()
-            #self.stopsaved= True
-            #self.hiloMYOSaved.do_run = False
-            #self.hiloMYOSaved.join()
+            self.stopsaved= True
+            self.hiloMYOSaved.do_run = False
+            self.hiloMYOSaved.join()
             i = 0 
             s = 0
             self.pushButton_2.setEnabled(False)
+            self.pushButton_5.setEnabled(True)
+            self.save_csv_eeg()   
+
     
     def TimerGo(self, event):
         global s
@@ -467,14 +464,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        #ui.conexionMYO()
+        ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        #hilo_conexion_ultracortes.start()
+        hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        #timerEEG.start(0)
+        timerEEG.start(0)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
-        #timerEMG.start(2.56)
+        timerEMG.start(2.56)
         sys.exit(app.exec_())
