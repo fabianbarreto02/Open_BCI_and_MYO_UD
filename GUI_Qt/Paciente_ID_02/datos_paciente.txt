@@ -1,0 +1,5 @@
+Numero de identificación del estudio: 02
+Genero del paciente: Femenino
+Edad del paciente: 12
+Peso (Kg) del paciente: 12
+Paciente con condicion de discapacidad: Si

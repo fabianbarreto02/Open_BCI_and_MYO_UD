@@ -1,13 +1,21 @@
-import os
-def Crear_carpetaEEG():
-        global carpetaEEG 
-        global j
-        global fila
-        fila = 0
-        Archivo = True
-        j = 1
-        Tipo = "Prueba"
-        carpetaEEG = f"Base_Datos_{Tipo}" #Creacion de carpetas para guarda archivos si no existe
-        if not os.path.exists(carpetaEEG):
-            os.makedirs("pruena/" + carpetaEEG)
-Crear_carpetaEEG()
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
+
+
+
+
+df = pd.read_csv('prueba.csv', delimiter=';')
+
+containerEMG = []
+for i in range(1,9):
+    trace = (go.Scatter(y=df['CH%d '%i], showlegend=True, 
+                        name = 'CH%d '%i))
+    containerEMG.append(trace)
+    
+
+layout = go.Layout(title='Señales EMG capturadas',
+                   plot_bgcolor='rgb(230, 230,230)')
+
+fig = go.Figure(data=containerEMG, layout=layout)
+fig.show()

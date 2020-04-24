@@ -10,9 +10,13 @@ import os
 from PyQt5.QtWidgets import  QMessageBox
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
+import pandas as pd
 
 
 class Ui_Datos_Paciente(object):
+
+    
     def setupUi(self, Datos_Paciente):
         Datos_Paciente.setObjectName("Datos_Paciente")
         Datos_Paciente.resize(881, 723)
@@ -74,8 +78,9 @@ class Ui_Datos_Paciente(object):
         self.radioButton_2.setObjectName("radioButton_2")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setEnabled(False)
-        self.pushButton.setGeometry(QtCore.QRect(520, 630, 113, 32))
+        self.pushButton.setGeometry(QtCore.QRect(520, 630, 133, 32))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.enviar_carpeta)
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(350, 630, 113, 32))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -110,10 +115,19 @@ class Ui_Datos_Paciente(object):
         self.label_8.setText(_translate("Datos_Paciente", "<html><head/><body><p align=\"justify\"><span style=\" font-weight:600;\">Autoriza al equipo de investigador exponer sus datos </span></p><p align=\"justify\"><span style=\" font-weight:600;\">consignados con anterioridada la comunidad cientifica: </span></p><p align=\"justify\"><span style=\" font-weight:600;\"><br/></span></p></body></html>"))
         self.radioButton.setText(_translate("Datos_Paciente", "Si"))
         self.radioButton_2.setText(_translate("Datos_Paciente", "No"))
-        self.pushButton.setText(_translate("Datos_Paciente", "SIGUIENTE"))
+        self.pushButton.setText(_translate("Datos_Paciente", "CREAR PACIENTE"))
         self.pushButton_2.setText(_translate("Datos_Paciente", "CANCELAR"))
     
     def close_application(self):
+        sys.exit()
+        
+    def closeEvent(self, event):
+        pass
+
+    def enviar_carpeta(self):
+        global carpetaPaciente 
+        with open(os.path.join( "dato_carpeta.csv"), 'w') as fp:
+            fp.write(carpetaPaciente)
         sys.exit()
 
     def crear_paciente(self):
@@ -147,7 +161,6 @@ class Ui_Datos_Paciente(object):
             self.pushButton.setEnabled(True)
 
 
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -155,4 +168,4 @@ if __name__ == "__main__":
     ui = Ui_Datos_Paciente()
     ui.setupUi(Datos_Paciente)
     Datos_Paciente.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec_()) 

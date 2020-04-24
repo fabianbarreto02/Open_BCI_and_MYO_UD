@@ -14,6 +14,7 @@ import numpy as np
 from scipy import signal
 from pyqtgraph import PlotWidget
 import os
+import sys
 
 # Librerias Myo
 import myo
@@ -26,6 +27,10 @@ import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
+
+from GUI_DATOS import Ui_Datos_Paciente
+import subprocess
 
 ##########################################################
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -68,12 +73,18 @@ class Ui_MainWindow(object):
         self.pushButton_2.clicked.connect(self.inittimer)
         self.pushButton_2.setEnabled(False)
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(10, 20, 141, 41))
+        self.pushButton_3.setGeometry(QtCore.QRect(10, 55, 141, 41))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.setEnabled(False)
         self.pushButton_3.clicked.connect(self.carpeta_gesto)
 
+        self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_6.setGeometry(QtCore.QRect(10, 15, 141, 41))
+        self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_6.clicked.connect(self.crear_paciente)
+
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber.setGeometry(QtCore.QRect(20, 230, 111, 61))
+        self.lcdNumber.setGeometry(QtCore.QRect(30, 260, 111, 61))
         self.lcdNumber.setSmallDecimalPoint(True)
         self.lcdNumber.setDigitCount(4)
         self.lcdNumber.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -82,7 +93,7 @@ class Ui_MainWindow(object):
 
 
         self.lcdNumber1 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber1.setGeometry(QtCore.QRect(130,190,32,25))
+        self.lcdNumber1.setGeometry(QtCore.QRect(130,223,32,25))
         self.lcdNumber1.setSmallDecimalPoint(True)
         self.lcdNumber1.setDigitCount(2)
         self.lcdNumber1.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -91,11 +102,11 @@ class Ui_MainWindow(object):
 
 
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(100, 140, 81, 41))
+        self.label.setGeometry(QtCore.QRect(100, 165, 81, 41))
         self.label.setObjectName("label")
 
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(20, 140, 71, 31))
+        self.textEdit.setGeometry(QtCore.QRect(20, 170, 71, 31))
         self.textEdit.setObjectName("textEdit")
 
         self.graphicsView_2 = GraphicsLayoutWidget(self.centralwidget)
@@ -140,15 +151,15 @@ class Ui_MainWindow(object):
         self.movie.start()
 
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(40, 290, 81, 41))
+        self.label_6.setGeometry(QtCore.QRect(40, 320, 81, 41))
         self.label_6.setObjectName("label_6")
 
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(10,73,141,20))
+        self.label_7.setGeometry(QtCore.QRect(10,100,141,20))
         self.label_7.setObjectName("label_7")
         
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(15,190,141,20))
+        self.label_8.setGeometry(QtCore.QRect(15,225,141,20))
         self.label_8.setObjectName("label_8")
         
         self.label_9 = QtWidgets.QLabel(self.centralwidget)
@@ -157,7 +168,7 @@ class Ui_MainWindow(object):
 
 
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(10, 100, 141, 22))
+        self.comboBox.setGeometry(QtCore.QRect(10, 130, 141, 22))
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -180,6 +191,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "SEGUNDOS"))
         self.pushButton_4.setText(_translate("MainWindow", "SIGUIENTE"))
         self.pushButton_5.setText(_translate("MainWindow", "PLOT"))
+        self.pushButton_6.setText(_translate("MainWindow", "CREAR PACIENTE"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_4.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EMG 8 Canales</p></body></html>"))
@@ -192,20 +204,30 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(3, _translate("MainWindow", "Gesto_4"))
         self.comboBox.setItemText(4, _translate("MainWindow", "Gesto_5"))
 ##############################################################################################################################
+    def crear_paciente(self):
+
+        subprocess.Popen("python3 GUI_DATOS.py", shell=True)
+        self.pushButton_3.setEnabled(True)
+
+    
     def carpeta_gesto(self):
         global carpetaEEG 
-        global carpetaEMG
+        global carpetaEMG, carpetaPaciente
         global j
         Archivo = True
         j = 1
         self.lcdNumber.display("0:00")
         self.pushButton_2.setEnabled(True)
         nombre_capeta = self.comboBox.currentText()
-        carpetaEEG = self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX"
-        carpetaEMG = self.comboBox.currentText()+"/" + "Datos_CSV_MYO"
-        if not os.path.exists(nombre_capeta):
-            os.makedirs(self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX" )
-            os.mkdir(self.comboBox.currentText()+"/" + "Datos_CSV_MYO" )
+        with open('dato_carpeta.csv') as f:
+            carpetaPaciente = f.read()  # add trailing new line character
+
+        print(carpetaPaciente)
+        carpetaEEG = carpetaPaciente+ "/" + self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX"
+        carpetaEMG = carpetaPaciente+ "/" +self.comboBox.currentText()+"/" + "Datos_CSV_MYO"
+        if not os.path.exists(carpetaPaciente+ "/" +nombre_capeta):
+            os.makedirs(carpetaPaciente + "/"+ self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX" )
+            os.mkdir(carpetaPaciente + "/"+ self.comboBox.currentText()+"/" + "Datos_CSV_MYO" )
         while(Archivo == True):# Se crea un archivo csv en caso de que no exista
             if os.path.isfile(carpetaEEG + "/datos_%d.csv"% j):
                 j+=1 
@@ -236,12 +258,7 @@ class Ui_MainWindow(object):
                     print("Archivo Creado EMG")
                     Archivo = False
         
-        
 
-        
-     
-
-    
     def save_data_EEG(self, sample):
         global data , fila , inittimer
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
@@ -317,19 +334,51 @@ class Ui_MainWindow(object):
 
     def plot_final(self):
         global j , carpetaEEG ,carpetaEMG
+        # current_dir = os.path.dirname(os.path.realpath(__file__)) 
+        # filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j) 
+        # print(filenameemg)
+        # data_emg = pd.read_csv(filenameemg, delimiter=';', skiprows= 2)
+        # data_emg.dropna(axis=1,inplace=True)
+        # labels={'CH1 ', 'CH2 ', 'CH3 ', 'CH4 ', 'CH5 ', 'CH6 ', 'CH7 ', 'CH8 '}
+
+
+        # current_dir_eeg = os.path.dirname(os.path.realpath(__file__)) 
+        # filenameeeg = os.path.join(current_dir_eeg, carpetaEEG + "/datos_%d.csv" %j) 
+        # data_eeg = pd.read_csv(filenameeeg, delimiter=';', skiprows= 2)
+        # data_eeg.dropna(axis=1,inplace=True)
+        # data_eeg.plot()
+        # data_emg.plot()
+        # plt.show()
+
+        ##################################
         current_dir = os.path.dirname(os.path.realpath(__file__)) 
-        filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j) 
-        print(filenameemg)
+        filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j)
         data_emg = pd.read_csv(filenameemg, delimiter=';', skiprows= 2)
-        data_emg.dropna(axis=1,inplace=True)
-        labels={'CH1 ', 'CH2 ', 'CH3 ', 'CH4 ', 'CH5 ', 'CH6 ', 'CH7 ', 'CH8 '}
+        containerEMG = []
+        for i in range(1,9):
+            trace = (go.Scatter(y=data_emg['CH%d '%i], showlegend=True, 
+                                name = 'CH%d '%i))
+            containerEMG.append(trace)
+        layoutEMG = go.Layout(title='Señales EMG capturadas',
+                        plot_bgcolor='rgb(230, 230,230)')
+        figEmg = go.Figure(data=containerEMG, layout=layoutEMG)
+
         current_dir_eeg = os.path.dirname(os.path.realpath(__file__)) 
         filenameeeg = os.path.join(current_dir_eeg, carpetaEEG + "/datos_%d.csv" %j) 
         data_eeg = pd.read_csv(filenameeeg, delimiter=';', skiprows= 2)
-        data_eeg.dropna(axis=1,inplace=True)
-        data_eeg.plot()
-        data_emg.plot()
-        plt.show()
+        containerEEG = []
+        for i in range(1,9):
+            trace = (go.Scatter(y=data_eeg['CH%d '%i], showlegend=True, 
+                                name = 'CH%d '%i))
+            containerEEG.append(trace)
+        layoutEEG = go.Layout(title='Señales EEG capturadas',
+                        plot_bgcolor='rgb(230, 230,230)')
+        figEEG = go.Figure(data=containerEEG, layout=layoutEEG)
+
+
+        figEmg.show()
+        figEEG.show()
+
 
     def inittimer(self):
         global inittimer, prueba
@@ -453,6 +502,30 @@ class EmgCollector(myo.DeviceListener):
       self.emg_data_queue.append((event.timestamp, event.emg))
 
 
+    got_password = QtCore.pyqtSignal(str)
+
+    def __init__(self):
+        super(Ui_Datos_Paciente, self).__init__()
+
+        self.password = QtWidgets.QLineEdit()
+        self.password.setEchoMode(QtWidgets.QLineEdit.Password)
+        send_button = QtWidgets.QPushButton("Send")
+        close_button = QtWidgets.QPushButton("Close")
+
+        send_button.clicked.connect(self.send_clicked)
+        close_button.clicked.connect(self.close)
+
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.password)
+        layout.addWidget(send_button)
+        layout.addWidget(close_button)
+
+        self.setLayout(layout)
+        self.setWindowTitle("Login")
+        self.setMinimumWidth(350)
+
+    def send_clicked(self):
+        self.got_password.emit(self.password.text())
 
 
 
@@ -464,14 +537,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        ui.conexionMYO()
+        #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        hilo_conexion_ultracortes.start()
+        #hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(0)
+        #timerEEG.start(0)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(2.56)
+        #timerEMG.start(2.56)
         sys.exit(app.exec_())
