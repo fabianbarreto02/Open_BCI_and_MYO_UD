@@ -18,4 +18,3 @@ layout = go.Layout(title='Señales EMG capturadas',
                    plot_bgcolor='rgb(230, 230,230)')
 
 fig = go.Figure(data=containerEMG, layout=layout)
-fig.show()

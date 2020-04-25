@@ -206,7 +206,7 @@ class Ui_MainWindow(object):
 ##############################################################################################################################
     def crear_paciente(self):
 
-        subprocess.Popen("python3 GUI_DATOS.py", shell=True)
+        subprocess.Popen("python GUI_DATOS.py", shell=True)
         self.pushButton_3.setEnabled(True)
 
     
@@ -375,9 +375,8 @@ class Ui_MainWindow(object):
                         plot_bgcolor='rgb(230, 230,230)')
         figEEG = go.Figure(data=containerEEG, layout=layoutEEG)
 
-
-        figEmg.show()
-        figEEG.show()
+        figEmg.write_html('EMG.html', auto_open=True)
+        figEEG.write_html('EEG.html', auto_open=True)
 
 
     def inittimer(self):
@@ -537,14 +536,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        #ui.conexionMYO()
+        ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        #hilo_conexion_ultracortes.start()
+        hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        #timerEEG.start(0)
+        timerEEG.start(0)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
-        #timerEMG.start(2.56)
+        timerEMG.start(2.56)
         sys.exit(app.exec_())
