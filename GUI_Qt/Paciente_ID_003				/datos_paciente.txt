@@ -1,5 +1,0 @@
-Numero de identificación del estudio: 003				
-Genero del paciente: Femenino
-Edad del paciente: 32
-Peso (Kg) del paciente: 23
-Paciente con condicion de discapacidad: Si

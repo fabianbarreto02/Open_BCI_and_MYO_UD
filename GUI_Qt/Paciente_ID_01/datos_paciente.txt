@@ -1,5 +1,0 @@
-Numero de identificación del estudio: 01
-Genero del paciente: Femenino
-Edad del paciente: 2
-Peso (Kg) del paciente: 2
-Paciente con condicion de discapacidad: Si
