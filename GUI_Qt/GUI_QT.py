@@ -37,7 +37,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget, GraphicsLayoutWidget
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
-data = [[0,0,0,0,0,0,0,0]]
+data = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 SCALE_FACTOR = (4500000)/24/(2**23-1) #From the pyOpenBCI repo
 colors = 'bbbbbbbb'
 i = 0
@@ -237,7 +237,7 @@ class Ui_MainWindow(object):
                     fp.write("\n")
                     fp.write(datetime.datetime.now().strftime("%Y;%m;%d;%H-%M-%S"))
                     fp.write("\n")
-                    [fp.write('CH%d ;'%i)for i in range(1,9)]
+                    [fp.write('CH%d ;'%i)for i in range(1,17)]
                     fp.write("\n")
                     print("Archivo Creado EEG")
                     self.lcdNumber1.display(str(j))
@@ -283,11 +283,11 @@ class Ui_MainWindow(object):
 
 
     def save_csv_eeg(self):
-        global prueba, fila, data, c
+        global prueba, fila, data, c, carpetaEEG
 
         with open(os.path.join(carpetaEEG, "datos_%d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
             for  k in range(prueba, prueba+(250*int(c))):
-                for i in range(0,8):
+                for i in range(0,16):
                     fp.write(str(data[k][i])+";")
                 fp.write("\n")
 
@@ -301,7 +301,9 @@ class Ui_MainWindow(object):
             self.ts_plots[j].clear()
             # self.ts_plots[j].plot(t_data[j])
             self.ts_plots[j].plot(pen=colors[j]).setData(t_data[j])
-    
+        for k in range(8,16):
+            self.ts_plots_2[k-8].clear()
+            self.ts_plots_2[k-8].plot(pen=colors[1]).setData(t_data[k])    
     # Metodo Arranque MYO
     def conexionMYO(self):
         print("Realizando Conexión MYO")
@@ -334,23 +336,6 @@ class Ui_MainWindow(object):
 
     def plot_final(self):
         global j , carpetaEEG ,carpetaEMG
-        # current_dir = os.path.dirname(os.path.realpath(__file__)) 
-        # filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j) 
-        # print(filenameemg)
-        # data_emg = pd.read_csv(filenameemg, delimiter=';', skiprows= 2)
-        # data_emg.dropna(axis=1,inplace=True)
-        # labels={'CH1 ', 'CH2 ', 'CH3 ', 'CH4 ', 'CH5 ', 'CH6 ', 'CH7 ', 'CH8 '}
-
-
-        # current_dir_eeg = os.path.dirname(os.path.realpath(__file__)) 
-        # filenameeeg = os.path.join(current_dir_eeg, carpetaEEG + "/datos_%d.csv" %j) 
-        # data_eeg = pd.read_csv(filenameeeg, delimiter=';', skiprows= 2)
-        # data_eeg.dropna(axis=1,inplace=True)
-        # data_eeg.plot()
-        # data_emg.plot()
-        # plt.show()
-
-        ##################################
         current_dir = os.path.dirname(os.path.realpath(__file__)) 
         filenameemg = os.path.join(current_dir, carpetaEMG+"/datos_%d.csv" %j)
         data_emg = pd.read_csv(filenameemg, delimiter=';', skiprows= 2)
@@ -367,7 +352,7 @@ class Ui_MainWindow(object):
         filenameeeg = os.path.join(current_dir_eeg, carpetaEEG + "/datos_%d.csv" %j) 
         data_eeg = pd.read_csv(filenameeeg, delimiter=';', skiprows= 2)
         containerEEG = []
-        for i in range(1,9):
+        for i in range(1,17):
             trace = (go.Scatter(y=data_eeg['CH%d '%i], showlegend=True, 
                                 name = 'CH%d '%i))
             containerEEG.append(trace)
@@ -470,7 +455,7 @@ class Ui_MainWindow(object):
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "COM8", daisy= False)
+    board = OpenBCICyton( "COM8", daisy= True)
     board.start_stream(ui.save_data_EEG)
 
 
@@ -536,14 +521,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        ui.conexionMYO()
+        #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
         hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(0)
-        timerEMG = QtCore.QTimer()
-        timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(2.56)
+        timerEEG.start(40)
+        #timerEMG = QtCore.QTimer()
+        #timerEMG.timeout.connect(ui.updater_EMG)
+        #timerEMG.start(50)
         sys.exit(app.exec_())
