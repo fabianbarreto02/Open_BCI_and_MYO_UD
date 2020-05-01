@@ -55,6 +55,9 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1339, 721)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("LOGOLASER.jpg"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
@@ -322,7 +325,6 @@ class Ui_MainWindow(object):
         with self.hub.run_in_background(self.listener.on_event):
             emg_data = self.listener.get_emg_data()
             emg_data = np.array([x[1] for x in emg_data]).T
-            #emg_data = np.array([2 , 3 , 4 , 5 ,6 ,7,8,9], dtype=np.int64)
             print("\r")
 
             for g, data in zip(range(8), emg_data):
@@ -432,9 +434,9 @@ class Ui_MainWindow(object):
             self.hiloRunTimmer.do_run = False
             inittimer = False
             print(fila- prueba)
-            self.stopsaved= True
-            self.hiloMYOSaved.do_run = False
-            self.hiloMYOSaved.join()
+            #self.stopsaved= True
+            #self.hiloMYOSaved.do_run = False
+            #self.hiloMYOSaved.join()
             i = 0 
             s = 0
             self.pushButton_2.setEnabled(False)
@@ -500,30 +502,6 @@ class EmgCollector(myo.DeviceListener):
       self.emg_data_queue.append((event.timestamp, event.emg))
 
 
-    got_password = QtCore.pyqtSignal(str)
-
-    def __init__(self):
-        super(Ui_Datos_Paciente, self).__init__()
-
-        self.password = QtWidgets.QLineEdit()
-        self.password.setEchoMode(QtWidgets.QLineEdit.Password)
-        send_button = QtWidgets.QPushButton("Send")
-        close_button = QtWidgets.QPushButton("Close")
-
-        send_button.clicked.connect(self.send_clicked)
-        close_button.clicked.connect(self.close)
-
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.password)
-        layout.addWidget(send_button)
-        layout.addWidget(close_button)
-
-        self.setLayout(layout)
-        self.setWindowTitle("Login")
-        self.setMinimumWidth(350)
-
-    def send_clicked(self):
-        self.got_password.emit(self.password.text())
 
 
 
@@ -538,10 +516,10 @@ if __name__ == "__main__":
         #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        # hilo_conexion_ultracortes.start()
+        hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        # timerEEG.start(40)
+        timerEEG.start(40)
         #timerEMG = QtCore.QTimer()
         #timerEMG.timeout.connect(ui.updater_EMG)
         #timerEMG.start(50)
