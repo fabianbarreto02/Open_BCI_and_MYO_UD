@@ -28,6 +28,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+from playsound import playsound
 
 from GUI_DATOS import Ui_Datos_Paciente
 import subprocess
@@ -286,7 +287,7 @@ class Ui_MainWindow(object):
         global prueba, fila, data, c, carpetaEEG
 
         with open(os.path.join(carpetaEEG, "datos_%d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
-            for  k in range(prueba, prueba+(250*int(c))):
+            for  k in range(prueba, prueba+(125*int(c))):
                 for i in range(0,16):
                     fp.write(str(data[k][i])+";")
                 fp.write("\n")
@@ -386,7 +387,7 @@ class Ui_MainWindow(object):
                 print("Stopping as you wish.")
             self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
             self.hiloMYOSaved.setDaemon(True)
-            self.hiloMYOSaved.start()
+            # self.hiloMYOSaved.start()
 
             def hiloRunTimmer(arg):
                 hiloRunTimmer = threading.currentThread()
@@ -397,8 +398,15 @@ class Ui_MainWindow(object):
             self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
             self.hiloRunTimmer.setDaemon(True)
             self.hiloRunTimmer.start()
+            def hiloBiocina(arg):
+                hiloRunTimmer = threading.currentThread()
+                while getattr(hiloRunTimmer, "do_run", True):
+                        print("working on %s" % arg)
+                        playsound('Bocina.mp3')  
+                print("Stopping as you wish.")
+            self.hiloBiocina = threading.Thread(target=hiloBiocina,args=("RUN_Bocina",))
 
-     
+   
             
 
 
@@ -409,8 +417,14 @@ class Ui_MainWindow(object):
         c = e
         if(i < int(c)):
             i += 1   
+            if (i == 2):
+                self.hiloBiocina.start()      
+            if (i == 3):
+                self.hiloBiocina.do_run = False
+                self.hiloBiocina.join()                   
             time.sleep(1)
             self.TimerGo(None)
+           
             
             
         else:
@@ -524,10 +538,10 @@ if __name__ == "__main__":
         #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        hilo_conexion_ultracortes.start()
+        # hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(40)
+        # timerEEG.start(40)
         #timerEMG = QtCore.QTimer()
         #timerEMG.timeout.connect(ui.updater_EMG)
         #timerEMG.start(50)
