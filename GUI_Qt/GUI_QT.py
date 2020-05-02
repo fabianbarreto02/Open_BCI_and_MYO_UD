@@ -389,7 +389,7 @@ class Ui_MainWindow(object):
                 print("Stopping as you wish.")
             self.hiloMYOSaved = threading.Thread(target=hiloMYOSaved,args=("Saved_EMG_MYO",))
             self.hiloMYOSaved.setDaemon(True)
-            # self.hiloMYOSaved.start()
+            
 
             def hiloRunTimmer(arg):
                 hiloRunTimmer = threading.currentThread()
@@ -399,6 +399,7 @@ class Ui_MainWindow(object):
                 print("Stopping as you wish.")
             self.hiloRunTimmer = threading.Thread(target=hiloRunTimmer,args=("RUN_Timmer",))
             self.hiloRunTimmer.setDaemon(True)
+            self.hiloMYOSaved.start()
             self.hiloRunTimmer.start()
             def hiloBiocina(arg):
                 hiloRunTimmer = threading.currentThread()
@@ -433,10 +434,9 @@ class Ui_MainWindow(object):
             print("Termino Timer")
             self.hiloRunTimmer.do_run = False
             inittimer = False
-            print(fila- prueba)
-            #self.stopsaved= True
-            #self.hiloMYOSaved.do_run = False
-            #self.hiloMYOSaved.join()
+            self.stopsaved= True
+            self.hiloMYOSaved.do_run = False
+            self.hiloMYOSaved.join()
             i = 0 
             s = 0
             self.pushButton_2.setEnabled(False)
@@ -513,14 +513,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        #ui.conexionMYO()
+        ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
         hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
         timerEEG.start(40)
-        #timerEMG = QtCore.QTimer()
-        #timerEMG.timeout.connect(ui.updater_EMG)
-        #timerEMG.start(50)
+        timerEMG = QtCore.QTimer()
+        timerEMG.timeout.connect(ui.updater_EMG)
+        timerEMG.start(50)
         sys.exit(app.exec_())
