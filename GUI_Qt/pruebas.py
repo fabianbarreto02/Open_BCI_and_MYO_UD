@@ -1,2 +1,4 @@
-from playsound import playsound
-playsound('Bocina.mp3')
+
+import subprocess
+
+subprocess.call(['open', "consentimiento.pdf"])
