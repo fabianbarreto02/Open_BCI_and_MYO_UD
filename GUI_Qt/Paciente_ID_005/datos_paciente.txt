@@ -1,5 +1,0 @@
-Numero de identificación del estudio: 005
-Genero del paciente: Prefiero no decir
-Edad del paciente: 23
-Peso (Kg) del paciente: 80
-Paciente con condicion de discapacidad: Si

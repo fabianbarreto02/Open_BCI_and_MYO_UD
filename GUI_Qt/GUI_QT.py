@@ -179,6 +179,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -207,6 +208,7 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(2, _translate("MainWindow", "Gesto_3"))
         self.comboBox.setItemText(3, _translate("MainWindow", "Gesto_4"))
         self.comboBox.setItemText(4, _translate("MainWindow", "Gesto_5"))
+        self.comboBox.setItemText(5, _translate("MainWindow", "Gesto_6"))
 ##############################################################################################################################
     def crear_paciente(self):
 

@@ -1,5 +1,0 @@
-Numero de identificación del estudio: 007
-Genero del paciente: Masculino
-Edad del paciente: 23
-Peso (Kg) del paciente: 80
-Paciente con condicion de discapacidad: No
