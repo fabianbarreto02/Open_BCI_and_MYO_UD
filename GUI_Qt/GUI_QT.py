@@ -15,7 +15,7 @@ from scipy import signal
 from pyqtgraph import PlotWidget
 import os
 import sys
-
+from scipy.signal import butter, sosfilt, sosfreqz
 # Librerias Myo
 import myo
 from collections import deque
@@ -268,6 +268,7 @@ class Ui_MainWindow(object):
     def save_data_EEG(self, sample):
         global data , fila , inittimer
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
+       
         fila+= 1
 
     def save_csv_emg(self):
@@ -291,25 +292,47 @@ class Ui_MainWindow(object):
     def save_csv_eeg(self):
         global prueba, fila, data, c, carpetaEEG
 
+        time.sleep(1)
+        dataG = data
+        dataG = np.array(dataG).T
+        dataG = self.butter_bandpass_filter(dataG, 8, 13, 125, order=5)
+        dataG =dataG.T
+        
+
         with open(os.path.join(carpetaEEG, "datos_%d.csv"% j), 'a') as fp: # Guardar datos en el archivo csv        
-            for  k in range(prueba, prueba+(125*int(c))):
+            for  k in range(prueba, prueba+(125*int(5))):
                 for i in range(0,16):
-                    fp.write(str(data[k][i])+";")
+                    fp.write(str(dataG[k][i])+";")
                 fp.write("\n")
 
-   
+    def butter_bandpass(self,lowcut, highcut, fs, order=5):
+        nyq = 0.5 * fs
+        low = lowcut / nyq
+        high = highcut / nyq
+        sos = butter(order, [low, high], analog=False, btype='band', output='sos')
+        return sos
+
+
+    def butter_bandpass_filter(self,data, lowcut, highcut, fs, order=5):
+        sos = self.butter_bandpass(lowcut, highcut, fs, order=order)
+        y = sosfilt(sos, data)
+        return y
+
     
     def updater_EEG(self):
         global data, plots, colors
+        
         t_data = np.array(data[-1250:]).T #transpose data
+        t_data = self.butter_bandpass_filter(t_data, 8, 13, 125, order=5)
         # Plot a time series EEG of the raw data
         for j in range(8):
+            # t_data[j] = self.butter_bandpass_filter(t_data[j], 8, 13, 125, order=5)
             self.ts_plots[j].clear()
-            # self.ts_plots[j].plot(t_data[j])
-            self.ts_plots[j].plot(pen=colors[j]).setData(t_data[j])
+            self.ts_plots[j].plot(pen=colors[j]).setData(t_data[j][400:])
         for k in range(8,16):
+            # t_data[k] = self.butter_bandpass_filter(t_data[k], 8, 13, 125, order=5)
             self.ts_plots_2[k-8].clear()
-            self.ts_plots_2[k-8].plot(pen=colors[1]).setData(t_data[k])    
+            self.ts_plots_2[k-8].plot(pen=colors[1]).setData(t_data[k][400:])    
     # Metodo Arranque MYO
     def conexionMYO(self):
         print("Realizando Conexión MYO")
@@ -515,14 +538,14 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        ui.conexionMYO()
+        #ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
         hilo_conexion_ultracortes.start()
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(40)
-        timerEMG = QtCore.QTimer()
-        timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(50)
+        timerEEG.start(60)
+        # timerEMG = QtCore.QTimer()
+        # timerEMG.timeout.connect(ui.updater_EMG)
+        # timerEMG.start(50)
         sys.exit(app.exec_())
