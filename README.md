@@ -1,18 +1,14 @@
-# Open_BCI_and_MYO_UD
 
-Repositorio de proyecto de investigación del grupo de investigación LASER Universidad Distrital Francisco Jose de Caldas, donde se estudia las señales EMG y EEG para la caracterización de gestos del miembro superior capturadas con herramienta UltrCortex OPENBCI y MYO Arbmand
 
-<a href="http://fvcproductions.com"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/GUI_Qt/LOGOLASER.jpg" title="FVCproductions" alt="FVCproductions"></a>
 
-<!-- [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) -->
+<a href="https://laserud.co/"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/GUI_Qt/LOGOLASER.jpg" title="Laser" alt="Laser"></a>
 
-***INSERT GRAPHIC HERE (include hyperlink in image)***
 
-# Repository Title Goes Here
 
-> Subtitle or Short Description Goes Here
+# Proyecto de investigación Open BCI y MYO Armband 
 
-> ideally one sentence
+> Repositorio de proyecto de investigación del grupo de investigación LASER Universidad Distrital Francisco Jose de Caldas, donde se estudia las señales EMG y EEG para la caracterización de gestos del miembro superior capturadas con herramienta UltrCortex OPENBCI y MYO Arbmand
+
 
 > include terms/tags that can be searched
 
