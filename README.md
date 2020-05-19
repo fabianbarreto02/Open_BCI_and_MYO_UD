@@ -11,11 +11,11 @@
 
 > Screenshot Datos paciente
 
-![Recordit GIF](http://g.recordit.co/iLN6A0vSD8.gif)
+![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Front_datos.jpeg)
 
 > Screenshot Captura señal paciente
 
-![Recordit GIF](http://g.recordit.co/iLN6A0vSD8.gif)
+![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Front_captura.jpeg)
 
 > GIF Tools
 
