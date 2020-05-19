@@ -9,6 +9,12 @@
 
 > Repositorio de proyecto de investigación del grupo de investigación LASER Universidad Distrital Francisco Jose de Caldas, donde se estudia las señales EMG y EEG para la caracterización de gestos del miembro superior capturadas con herramienta UltrCortex OPENBCI y MYO Arbmand
 
+> Herramientas utilizadas en el proyecto
+
+Para el desarrollo del proyecto de investigación se utilizaron las herramientas de captura de señales bioelécticas EMG y EEG, las herramientas MYO Armband(EMG) y el UltraCortex(EEG), para mas información revisar la siguiente documentación:
+- [MYO ArmBand](https://support.getmyo.com/hc/en-us)
+- [UltraCortex OpenBCI](https://openbci.com/)
+
 > Screenshot Datos paciente
 
 ![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Front_datos.jpeg)
