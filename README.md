@@ -59,7 +59,9 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 - Clone este repositorio en su máquina local usando `https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD.git`
 
-![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Clone.gif)
+
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Clone.gif" title="Laser" alt="Laser"></p>
+
 
 ### Setup
 
