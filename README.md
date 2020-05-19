@@ -20,7 +20,7 @@
 ## Tabla de contenido
 
 
-- [Instalación](#installation)
+- [Installation](#installation)
 - [Features](#features)
 - [Contributing](#contributing)
 - [Team](#team)
@@ -29,37 +29,30 @@
 - [License](#license)
 
 
----
-
-> GIF Tools
-
-- Use <a href="http://recordit.co/" target="_blank">**Recordit**</a> to create quicks screencasts of your desktop and export them as `GIF`s.
-- For terminal sessions, there's <a href="https://github.com/chjj/ttystudio" target="_blank">**ttystudio**</a> which also supports exporting `GIF`s.
-
-**Recordit**
-
-![Recordit GIF](http://g.recordit.co/iLN6A0vSD8.gif)
-
-**ttystudio**
-
-![ttystudio GIF](https://raw.githubusercontent.com/chjj/ttystudio/master/img/example.gif)
 
 ---
 
+## Installation
 
+### Pre-requirements
 
+Para poder corre el FrontEnd de captura de las señales EMG y EEG su equipo debe contar con los siguientes requerimientos:
 
+- [Python 3](https://www.python.org/download/releases/3.0/)
 
----
+Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
-## Instalación
+- [MYO -Python](https://pypi.org/project/myo-python/) 
+- [Open BCI](https://pypi.org/project/openbci/)
+- [Pyqtgraph](https://pypi.org/project/pyqtgraph/)
+- [Plotly](https://pypi.org/project/plotly/)
+- [Plotly express](https://pypi.org/project/plotly-express/)
+- [Play sound](https://pypi.org/project/playsound/)
 
-- All the `code` required to get started
-- Images of what it should look like
 
 ### Clone
 
-- Clone this repo to your local machine using `https://github.com/fvcproductions/SOMEREPO`
+- Clone este repositorio en su máquina local usando `https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD.git`
 
 ### Setup
 
