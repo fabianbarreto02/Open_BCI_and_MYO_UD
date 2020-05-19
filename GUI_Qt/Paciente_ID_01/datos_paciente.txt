@@ -1,5 +1,0 @@
-Numero de identificación del estudio: 01
-Genero del paciente: Masculino
-Edad del paciente: 25
-Peso (Kg) del paciente: 70
-Paciente con condicion de discapacidad: No

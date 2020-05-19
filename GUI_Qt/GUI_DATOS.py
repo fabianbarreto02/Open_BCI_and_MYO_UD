@@ -9,6 +9,8 @@
 import os
 from PyQt5.QtWidgets import  QMessageBox
 
+import subprocess
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import pandas as pd
@@ -59,23 +61,25 @@ class Ui_Datos_Paciente(object):
         self.label_6.setGeometry(QtCore.QRect(310, 210, 141, 20))
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(100, 510, 371, 91))
+        self.label_7.setGeometry(QtCore.QRect(130, 450, 371, 91))
         self.label_7.setObjectName("label_7")
         self.comboBox_2 = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_2.setGeometry(QtCore.QRect(490, 540, 151, 41))
+        self.comboBox_2.setGeometry(QtCore.QRect(480, 470, 151, 41))
         self.comboBox_2.setObjectName("comboBox_2")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(110, 600, 361, 61))
+        self.label_8.setGeometry(QtCore.QRect(110, 610, 361, 61))
         self.label_8.setObjectName("label_8")
         self.radioButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton.setGeometry(QtCore.QRect(510, 620, 51, 20))
+        self.radioButton.setGeometry(QtCore.QRect(510, 630, 51, 20))
         self.radioButton.setObjectName("radioButton")
         self.radioButton.clicked.connect(self.crear_paciente)
         self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.radioButton_2.setGeometry(QtCore.QRect(570, 620, 51, 20))
+        self.radioButton_2.setGeometry(QtCore.QRect(570, 630, 51, 20))
         self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton.setEnabled(False)
+        self.radioButton_2.setEnabled(False)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setEnabled(False)
         self.pushButton.setGeometry(QtCore.QRect(520, 680, 113, 32))
@@ -93,13 +97,32 @@ class Ui_Datos_Paciente(object):
         self.label_9.setGeometry(QtCore.QRect(290, 310, 171, 20))
         self.label_9.setObjectName("label_9")
         self.comboBox_3 = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_3.setGeometry(QtCore.QRect(480, 470, 151, 41))
+        self.comboBox_3.setGeometry(QtCore.QRect(480, 420, 151, 41))
         self.comboBox_3.setObjectName("comboBox_3")
         self.comboBox_3.addItem("")
         self.comboBox_3.addItem("")
         self.label_11 = QtWidgets.QLabel(self.centralwidget)
-        self.label_11.setGeometry(QtCore.QRect(210, 480, 261, 20))
+        self.label_11.setGeometry(QtCore.QRect(210, 430, 261, 20))
         self.label_11.setObjectName("label_11")
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(475, 540, 173, 25))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.clicked.connect(self.showpdf)
+        self.label_12 = QtWidgets.QLabel(self.centralwidget)
+        self.label_12.setGeometry(QtCore.QRect(210, 545, 261, 20))
+        self.label_12.setObjectName("label_12")
+        self.label_13 = QtWidgets.QLabel(self.centralwidget)
+        self.label_13.setGeometry(QtCore.QRect(170, 580, 261, 20))
+        self.label_13.setObjectName("label_13")
+
+        self.radioButton_3 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_3.setGeometry(QtCore.QRect(510, 580, 51, 20))
+        self.radioButton_3.setObjectName("radioButton")
+        self.radioButton_3.clicked.connect(self.consentimiento)
+        self.radioButton_4 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_4.setGeometry(QtCore.QRect(570, 580, 51, 20))
+        self.radioButton_4.setObjectName("radioButton_2")
+
         Datos_Paciente.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Datos_Paciente)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 881, 22))
@@ -115,7 +138,7 @@ class Ui_Datos_Paciente(object):
 
     def retranslateUi(self, Datos_Paciente):
         _translate = QtCore.QCoreApplication.translate
-        Datos_Paciente.setWindowTitle(_translate("Datos_Paciente", "MainWindow"))
+        Datos_Paciente.setWindowTitle(_translate("Datos_Paciente", "Información del paciente"))
         self.label.setText(_translate("Datos_Paciente", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt; font-weight:600;\">Datos del Paciente</span></p></body></html>"))
         self.label_2.setText(_translate("Datos_Paciente", "<html><head/><body><p align=\"justify\"><span style=\" font-size:14pt;\">A continuación debe ingresar una información básica que es relevanta para el estudio de las</span></p><p align=\"justify\"><span style=\" font-size:14pt;\">señales, por favor ingrese la siguiente información:</span></p></body></html>"))
         self.label_3.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Número de identificación del estudio:</span></p></body></html>"))
@@ -128,21 +151,32 @@ class Ui_Datos_Paciente(object):
         self.label_7.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Presenta alguna condición de </span></p><p><span style=\" font-size:10pt; font-weight:600;\">discapacidad motora o perdida de miembro superior :</span></p></body></html>"))
         self.comboBox_2.setItemText(0, _translate("Datos_Paciente", "Si"))
         self.comboBox_2.setItemText(1, _translate("Datos_Paciente", "No"))
-        self.label_8.setText(_translate("Datos_Paciente", "<html><head/><body><p align=\"justify\"><span style=\" font-weight:600;\">Autoriza al equipo de investigador exponer sus datos </span></p><p align=\"justify\"><span style=\" font-weight:600;\">consignados con anterioridad la comunidad cientifica: </span></p><p align=\"justify\"><span style=\" font-weight:600;\"><br/></span></p></body></html>"))
+        self.label_8.setText(_translate("Datos_Paciente", "<html><head/><body><p align=\"justify\"><span style=\" font-weight:600;\">Autoriza al equipo de investigador exponer sus datos </span></p><p align=\"justify\"><span style=\" font-weight:600;\">consignados con anterioridad a la comunidad cientifica: </span></p><p align=\"justify\"><span style=\" font-weight:600;\"><br/></span></p></body></html>"))
         self.radioButton.setText(_translate("Datos_Paciente", "Si"))
         self.radioButton_2.setText(_translate("Datos_Paciente", "No"))
+        self.radioButton_3.setText(_translate("Datos_Paciente", "Si"))
+        self.radioButton_4.setText(_translate("Datos_Paciente", "No"))
         self.pushButton.setText(_translate("Datos_Paciente", "SIGUIENTE"))
         self.pushButton_2.setText(_translate("Datos_Paciente", "CANCELAR"))
+        self.pushButton_3.setText(_translate("Datos_Paciente", "VER CONSENTIMIENTO"))
         self.label_9.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Altura del paciente (cm):</span></p></body></html>"))
         self.comboBox_3.setItemText(0, _translate("Datos_Paciente", "Derecho"))
         self.comboBox_3.setItemText(1, _translate("Datos_Paciente", "Izquierdo"))
         self.label_11.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Ubicación del brazalete en el paciente:</span></p></body></html>"))
+        self.label_12.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Consentimiento informado del estudio:</span></p></body></html>"))
+        self.label_13.setText(_translate("Datos_Paciente", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Leyó con cuidado el consentimiento informado:</span></p></body></html>"))
     
     def close_application(self):
         sys.exit()
         
     def closeEvent(self, event):
         pass
+
+    def consentimiento(self):
+        self.radioButton.setEnabled(True)
+        self.radioButton_2.setEnabled(True)
+    def showpdf(self):
+        subprocess.call(['open', "consentimiento.pdf"])
 
     def enviar_carpeta(self):
         global carpetaPaciente 
