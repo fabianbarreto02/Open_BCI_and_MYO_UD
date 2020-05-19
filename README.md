@@ -17,6 +17,20 @@
 
 ![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Front_captura.jpeg)
 
+## Tabla de contenido
+
+
+- [Instalación](#installation)
+- [Features](#features)
+- [Contributing](#contributing)
+- [Team](#team)
+- [FAQ](#faq)
+- [Support](#support)
+- [License](#license)
+
+
+---
+
 > GIF Tools
 
 - Use <a href="http://recordit.co/" target="_blank">**Recordit**</a> to create quicks screencasts of your desktop and export them as `GIF`s.
@@ -32,37 +46,13 @@
 
 ---
 
-## Table of Contents (Optional)
 
-> If your `README` has a lot of info, section headers might be nice.
 
-- [Installation](#installation)
-- [Features](#features)
-- [Contributing](#contributing)
-- [Team](#team)
-- [FAQ](#faq)
-- [Support](#support)
-- [License](#license)
 
 
 ---
 
-## Example (Optional)
-
-```javascript
-// code away!
-
-let generateProject = project => {
-  let code = [];
-  for (let js = 0; js < project.length; js++) {
-    code.push(js);
-  }
-};
-```
-
----
-
-## Installation
+## Instalación
 
 - All the `code` required to get started
 - Images of what it should look like
