@@ -27,7 +27,6 @@ Para el desarrollo del proyecto de investigación se utilizaron las herramientas
 
 
 - [Installation](#installation)
-- [Features](#features)
 - [Contributing](#contributing)
 - [Team](#team)
 - [FAQ](#faq)
@@ -60,6 +59,8 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 - Clone este repositorio en su máquina local usando `https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD.git`
 
+![Recordit GIF](https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Clone.gif)
+
 ### Setup
 
 - If you want more syntax highlighting, format your code like this:
@@ -82,15 +83,7 @@ $ bower install
 
 ---
 
-## Features
-## Usage (Optional)
-## Documentation (Optional)
-## Tests (Optional)
 
-- Going into more detail on code and technologies used
-- I utilized this nifty <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown Cheatsheet</a> for this sample `README`.
-
----
 
 ## Contributing
 
