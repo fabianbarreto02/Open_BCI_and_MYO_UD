@@ -122,12 +122,12 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 ## Team
 
-<p align="center">
-| <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> |
+
+
+| <a href="https://github.com/fabianbarreto02" target="_blank">**Fabian Barreto**</a> | <a href="https://github.com/CristianDavidSanchez" target="_blank">**Cristian Sanchez**</a> | <a href="https://github.com/NRDaza" target="_blank">**Nicolas Daza**</a> |
 | :---: |:---:| :---:|
 | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)    | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)  |
 | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> |
-</p>
 
 - You can just grab their GitHub profile image URL
 - You should probably resize their picture using `?s=200` at the end of the image URL.
