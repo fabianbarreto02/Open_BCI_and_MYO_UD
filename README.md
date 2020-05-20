@@ -94,6 +94,13 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 <p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Arranque_frame.gif" title="Correr  el aplicativo" alt="Correr  el aplicativo"></p>
 
 
+### Prueba de escritorio del aplicativo
+
+> Se realiza una prueba de escritorio del proyecto para mostrar el resultado final del aplicativo, observar el siguiente gif para mayor infomación:
+
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Funcionamiento_frame.gif" title="Prueba de escritorio del aplicativo" alt="Prueba de escritorio del aplicativo"></p>
+
+
 
 
 
