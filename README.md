@@ -69,7 +69,6 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 
 > Variable de entorno MYO
-
 > Para el correcto funcionamieno de la herramienta MYO se debe descargar el SDK del dispositivo y crear dos variable de entorno, una varible de usuario y una variable del sistema en los sistemas operativos windows, observar el siguiente gif para mayor infomación:
 
 <p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Variable_myo.gif" title="Variables MYO" alt="Variables MYO"></p>
