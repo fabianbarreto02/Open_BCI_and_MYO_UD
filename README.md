@@ -126,7 +126,7 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 | <a href="https://github.com/fabianbarreto02" target="_blank">**Fabian Barreto**</a> | <a href="https://github.com/CristianDavidSanchez" target="_blank">**Cristian Sanchez**</a> | <a href="https://github.com/NRDaza" target="_blank">**Nicolas Daza**</a> |
 | :---: |:---:| :---:|
-| [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)    | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) | [![Nicolas](https://avatars2.githubusercontent.com/u/34488581?s=400&u=f02bdb311d05b487e40fbe8dc712024596af956a&v=4&?s=200)](http://fvcproductions.com)  |
+| [![Fabian](https://avatars3.githubusercontent.com/u/43799065?s=200&u=4f2296f15ee5517409891d91a2e774b9c1a183fa&v=4)](http://fvcproductions.com)    | [![Cristian](https://avatars2.githubusercontent.com/u/45292213?s=200&u=f4851b78acbb0db7c5ba203982dfe71d2f1b785e&v=4)](http://fvcproductions.com) | [![Nicolas](https://avatars2.githubusercontent.com/u/34488581?s=200&u=f02bdb311d05b487e40fbe8dc712024596af956a&v=4)](http://fvcproductions.com)  |
 | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> |
 
 - You can just grab their GitHub profile image URL
