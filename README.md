@@ -81,6 +81,15 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 <p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Puerto_ultracortex.gif" title="Puerto UltraCortex" alt="Puerto UltraCortex"></p>
 
+> Iniciar MYO Connect
+
+> Finalmente se debe iniciar el aplicativo Myo Connect para que la libreria adquiera los datos EMG por medio del SDK, observar el siguiente gif para mayor infomación:
+
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Myo_conect.gif" title="MYO Connect" alt="MYO Connect"></p>
+
+
+
+
 
 
 
