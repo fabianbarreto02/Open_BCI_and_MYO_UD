@@ -60,14 +60,21 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 - Clone este repositorio en su máquina local usando `https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD.git`
 
 
-<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Clone.gif" title="Laser" alt="Laser"></p>
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Clone.gif" title="Clone del Repositorio" alt="Clone del Repositorio"></p>
 
 
 ### Setup
 
-- If you want more syntax highlighting, format your code like this:
+#### Configuración de herramienta (Myo Armband y UltraCortex)
 
-> update and install this package first
+
+> Variable de entorno MYO
+
+> Para el correcto funcionamieno de la herramienta MYO se debe descargar el SDK del dispositivo y crear dos variable de entorno, una varible de usuario y una variable del sistema en los sistemas operativos windows, observar el siguiente gif para mayor infomación:
+
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Variable_myo.gif" title="Variables MYO" alt="Variables MYO"></p>
+
+
 
 ```shell
 $ brew update
@@ -140,14 +147,6 @@ Reach out to me at one of the following places!
 
 ---
 
-## Donations (Optional)
-
-- You could include a <a href="https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png" target="_blank">Gratipay</a> link as well.
-
-[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/fvcproductions/)
-
-
----
 
 ## License
 
