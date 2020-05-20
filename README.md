@@ -29,7 +29,6 @@ Para el desarrollo del proyecto de investigación se utilizaron las herramientas
 - [Installation](#installation)
 - [Contributing](#contributing)
 - [Team](#team)
-- [FAQ](#faq)
 - [Support](#support)
 - [License](#license)
 
@@ -133,20 +132,13 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 ---
 
-## FAQ
-
-- **How do I do *specifically* so and so?**
-    - No problem! Just do this.
-
----
 
 ## Support
 
-Reach out to me at one of the following places!
+¡Ponte en contacto con nosotros en uno de los siguientes canales!
 
-- Website at <a href="http://fvcproductions.com" target="_blank">`fvcproductions.com`</a>
-- Twitter at <a href="http://twitter.com/fvcproductions" target="_blank">`@fvcproductions`</a>
-- Insert more social links here.
+- Website en <a href="https://laserud.co/#contact" target="_blank">`laserud.co`</a>
+
 
 ---
 
