@@ -7,7 +7,7 @@
 
 # Proyecto de investigación Open BCI y MYO Armband 
 
-> Repositorio de proyecto de investigación del grupo de investigación LASER Universidad Distrital Francisco Jose de Caldas, donde se estudia las señales EMG y EEG para la caracterización de gestos del miembro superior capturadas con herramienta UltrCortex OPENBCI y MYO Arbmand
+Repositorio de proyecto de investigación del grupo de investigación LASER Universidad Distrital Francisco Jose de Caldas, donde se estudia las señales EMG y EEG para la caracterización de gestos del miembro superior capturadas con herramienta UltrCortex OPENBCI y MYO Arbmand
 
 > Herramientas utilizadas en el proyecto
 
@@ -68,27 +68,23 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 #### Configuración de herramienta (Myo Armband y UltraCortex)
 
 
-> Variable de entorno MYO
+> Variables de entorno MYO
 
-> Para el correcto funcionamieno de la herramienta MYO se debe descargar el SDK del dispositivo y crear dos variable de entorno, una varible de usuario y una variable del sistema en los sistemas operativos windows, observar el siguiente gif para mayor infomación:
+> Para el correcto funcionamiento de la herramienta MYO se debe descargar el SDK del dispositivo y crear dos variable de entorno, una varible de usuario y una variable del sistema en los sistemas operativos windows, observar el siguiente gif para mayor infomación:
 
 <p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Variable_myo.gif" title="Variables MYO" alt="Variables MYO"></p>
 
 
+> Puerto UltraCortex
 
-```shell
-$ brew update
-$ brew install fvcproductions
-```
+> Para el correcto funcionamiento de la herramienta UltraCortex se debe configurar el puerto del dispositivo en los sistemas operativos windows, observar el siguiente gif para mayor infomación:
 
-> now install npm and bower packages
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Puerto_ultracortex.gif" title="Puerto UltraCortex" alt="Puerto UltraCortex"></p>
 
-```shell
-$ npm install
-$ bower install
-```
 
-- For all the possible languages that support syntax highlithing on GitHub (which is basically all of them), refer <a href="https://github.com/github/linguist/blob/master/lib/linguist/languages.yml" target="_blank">here</a>.
+
+
+
 
 ---
 
