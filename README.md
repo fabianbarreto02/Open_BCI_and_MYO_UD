@@ -87,7 +87,11 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 
 <p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Myo_conect.gif" title="MYO Connect" alt="MYO Connect"></p>
 
+### Correr  el aplicativo
 
+> Para correr el aplicativo con python 3 debe ingresar al directorio **../../Open_BCI_and_MYO_UD/GUI_Qt** y ejecutar el script **GUI_QT.py**, observar el siguiente gif para mayor infomación:
+
+<p align="center"><img src="https://github.com/fabianbarreto02/Open_BCI_and_MYO_UD/blob/master/Data_Readme/Arranque_frame.gif" title="Correr  el aplicativo" alt="Correr  el aplicativo"></p>
 
 
 
