@@ -49,7 +49,9 @@ fila = 0
 stm =0
 inittimer = False
 prueba = 0
-
+Cfiltro = 0
+LowF = 0
+HighF = 0
 
 class Ui_MainWindow(object):
     
@@ -128,6 +130,7 @@ class Ui_MainWindow(object):
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(20, 619, 131, 41))
         self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_4.clicked.connect(self.filtros)
 
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(20, 575, 131, 41))
@@ -195,7 +198,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "INICIO"))
         self.pushButton_3.setText(_translate("MainWindow", "INICIAR SESIÓN"))
         self.label.setText(_translate("MainWindow", "SEGUNDOS"))
-        self.pushButton_4.setText(_translate("MainWindow", "SIGUIENTE"))
+        self.pushButton_4.setText(_translate("MainWindow", "No Filter"))
         self.pushButton_5.setText(_translate("MainWindow", "PLOT"))
         self.pushButton_6.setText(_translate("MainWindow", "CREAR PACIENTE"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
@@ -321,11 +324,32 @@ class Ui_MainWindow(object):
         y = sosfilt(sos, data)
         return y
 
-    
+    def filtros(self):
+        global LowF, HighF, Cfiltro
+        if Cfiltro==0:
+            LowF = 0
+            HighF =0
+            self.pushButton_4.setText("No Filter")
+        elif  Cfiltro==1:
+            LowF = 8
+            HighF =13
+            self.pushButton_4.setText("8-13 Hz")
+        elif  Cfiltro==2:
+            LowF = 8
+            HighF =50
+            self.pushButton_4.setText("8-50 Hz")
+        Cfiltro +=1
+        if Cfiltro == 3:
+            Cfiltro= 0
+        
+
+
+
+
     def updater_EEG(self):
-        global data, plots, colors,board,stm
+        global data, colors,board,stm, LowF,HighF
         
-        
+
         if board.read_state==0:
             stm += 1
             if stm==50:
@@ -334,7 +358,9 @@ class Ui_MainWindow(object):
             stm = 0
         
         t_data = np.array(data[-1250:]).T #transpose data
-        t_data = self.butter_bandpass_filter(t_data, 8, 13, 125, order=5)
+
+        if LowF!=0 or HighF != 0:
+             t_data = self.butter_bandpass_filter(t_data, LowF, HighF, 125, order=5)
         # Plot a time series EEG of the raw data
         for j in range(8):
             # t_data[j] = self.butter_bandpass_filter(t_data[j], 8, 13, 125, order=5)
