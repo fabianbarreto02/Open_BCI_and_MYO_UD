@@ -46,6 +46,7 @@ s = 0
 m = 0
 t = 0
 fila = 0 
+stm =0
 inittimer = False
 prueba = 0
 
@@ -267,8 +268,10 @@ class Ui_MainWindow(object):
 
     def save_data_EEG(self, sample):
         global data , fila , inittimer
+
+
+
         data.append([i*SCALE_FACTOR for i in sample.channels_data])
-       
         fila+= 1
 
     def save_csv_emg(self):
@@ -320,7 +323,15 @@ class Ui_MainWindow(object):
 
     
     def updater_EEG(self):
-        global data, plots, colors
+        global data, plots, colors,board,stm
+        
+        
+        if board.read_state==0:
+            stm += 1
+            if stm==50:
+                self.Errores("ULTRACORTEX")
+        else:
+            stm = 0
         
         t_data = np.array(data[-1250:]).T #transpose data
         t_data = self.butter_bandpass_filter(t_data, 8, 13, 125, order=5)
@@ -493,11 +504,26 @@ class Ui_MainWindow(object):
         self.OnTimer(None, c)
     
     ######################### Metodos de aguardar datos
+    def Errores(self,equipo):
+        self.pushButton_6.setEnabled(False)
+        self.label_2.setVisible(False)
+        self.label_4.setVisible(False)
+        self.label_3.setFont(QtGui.QFont("Times", 15, QtGui.QFont.Bold))
+        self.label_3.setStyleSheet('color: red')
+        self.label_3.setGeometry(QtCore.QRect(500, 660, 101, 41))
+        self.label_3.setText("ERROR DISPOSITIVO "+str(equipo)+" NO ENCONTRADO") 
+        self.label_3.adjustSize()
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "COM8", daisy= True)
-    board.start_stream(ui.save_data_EEG)
+    global board
+
+    try:
+        board = OpenBCICyton( "COM8", daisy= True)
+        board.start_stream(ui.save_data_EEG)
+    
+    except:
+        ui.Errores("DONGLE")
 
 
 
@@ -538,14 +564,15 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        #ui.conexionMYO()
+        # ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
         hilo_conexion_ultracortes.start()
+        time.sleep(3)
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
         timerEEG.start(60)
-        # timerEMG = QtCore.QTimer()
+        timerEMG = QtCore.QTimer()
         # timerEMG.timeout.connect(ui.updater_EMG)
         # timerEMG.start(50)
         sys.exit(app.exec_())
