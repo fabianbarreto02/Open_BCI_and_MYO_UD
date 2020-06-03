@@ -353,7 +353,7 @@ class Ui_MainWindow(object):
         if board.read_state==0:
             stm += 1
             if stm==50:
-                self.Errores("ULTRACORTEX")
+                self.Errores("ULTRACORTEX DESCONECTADO")
         else:
             stm = 0
         
@@ -372,29 +372,55 @@ class Ui_MainWindow(object):
             self.ts_plots_2[k-8].plot(pen=colors[1]).setData(t_data[k][400:])    
     # Metodo Arranque MYO
     def conexionMYO(self):
+        global error_myo , contar_error
+        contar_error=0
+        error_myo = False
         print("Realizando Conexión MYO")
         myo.init()
-        self.hub = myo.Hub()
-        self.listener = EmgCollector(512)
-        self.stopconexion = False
-        self.stopsaved = False
-        print(self.listener)
-        print("Conexión MYO Establecida")
+        try:
+            self.hub = myo.Hub()
+            self.listener = EmgCollector(512)
+            self.stopconexion = False
+            self.stopsaved = False
+            print("Conexión MYO Establecida")
+        except:
+            error_myo= True
+            self.Errores("MYO CONNECT NO EJECUTADO ")
+
+
+        
+        
+        
+    
     
     def updater_EMG(self):
-        global colors
-        global emg_data
-        with self.hub.run_in_background(self.listener.on_event):
-            emg_data = self.listener.get_emg_data()
-            emg_data = np.array([x[1] for x in emg_data]).T
-            print("\r")
+        global colors, contar_error
+        global emg_data, error_myo
 
-            for g, data in zip(range(8), emg_data):
-                if len(data) < 512:
-                    data = np.concatenate([np.zeros(512 - len(data)), data])  
-                self.ts_plots_emg[g].clear()    
-                self.ts_plots_emg[g].plot(pen=colors[g]).setData(emg_data[g])
-        
+        if error_myo == True:
+            pass
+        else:
+            if self.hub._running == False:
+                contar_error=0
+                with self.hub.run_in_background(self.listener.on_event): 
+                    emg_data = self.listener.get_emg_data()
+                    emg_data = np.array([x[1] for x in emg_data]).T
+                    print("/r")
+                    #time.sleep(0.00001)
+
+                    for g, data in zip(range(8), emg_data):
+                        if len(data) < 512:
+                            data = np.concatenate([np.zeros(512 - len(data)), data])  
+                        self.ts_plots_emg[g].clear()    
+                        self.ts_plots_emg[g].plot(pen=colors[g]).setData(emg_data[g])
+            else:
+                contar_error +=1
+                if contar_error == 20:
+                    self.Errores("MYO DESCONECTADA")
+
+
+               
+                    
         
     def close_application(self):
         sys.exit()
@@ -537,7 +563,7 @@ class Ui_MainWindow(object):
         self.label_3.setFont(QtGui.QFont("Times", 15, QtGui.QFont.Bold))
         self.label_3.setStyleSheet('color: red')
         self.label_3.setGeometry(QtCore.QRect(500, 660, 101, 41))
-        self.label_3.setText("ERROR DISPOSITIVO "+str(equipo)+" NO ENCONTRADO") 
+        self.label_3.setText("ERROR DISPOSITIVO: "+str(equipo)) 
         self.label_3.adjustSize()
 
 # Metodo Arranque Ultracortex
@@ -549,7 +575,10 @@ def start_board_Ultracortex():
         board.start_stream(ui.save_data_EEG)
     
     except:
-        ui.Errores("DONGLE")
+        ui.Errores("DONGLE DESCONECTADO")
+
+
+
 
 
 
@@ -567,8 +596,7 @@ class EmgCollector(myo.DeviceListener):
 
   def get_emg_data(self):
     with self.lock:
-      return list(self.emg_data_queue)
-
+        return list(self.emg_data_queue)
   # myo.DeviceListener
 
   def on_connected(self, event):
@@ -590,15 +618,15 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        # ui.conexionMYO()
+        ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        hilo_conexion_ultracortes.start()
+        #hilo_conexion_ultracortes.start()
         time.sleep(3)
         timerEEG = QtCore.QTimer()
-        timerEEG.timeout.connect(ui.updater_EEG)
-        timerEEG.start(60)
+        #timerEEG.timeout.connect(ui.updater_EEG)
+        #timerEEG.start(60)
         timerEMG = QtCore.QTimer()
-        # timerEMG.timeout.connect(ui.updater_EMG)
-        # timerEMG.start(50)
+        timerEMG.timeout.connect(ui.updater_EMG)
+        timerEMG.start(50)
         sys.exit(app.exec_())
