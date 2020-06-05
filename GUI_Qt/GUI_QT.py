@@ -232,7 +232,6 @@ class Ui_MainWindow(object):
         with open('dato_carpeta.csv') as f:
             carpetaPaciente = f.read()  # add trailing new line character
 
-        print(carpetaPaciente)
         carpetaEEG = carpetaPaciente+ "/" + self.comboBox.currentText()+"/" + "Datos_CSV_ULTRACORTEX"
         carpetaEMG = carpetaPaciente+ "/" +self.comboBox.currentText()+"/" + "Datos_CSV_MYO"
         if not os.path.exists(carpetaPaciente+ "/" +nombre_capeta):
@@ -249,7 +248,6 @@ class Ui_MainWindow(object):
                     fp.write("\n")
                     [fp.write('CH%d ;'%i)for i in range(1,17)]
                     fp.write("\n")
-                    print("Archivo Creado EEG")
                     self.lcdNumber1.display(str(j))
                     self.lcdNumber.repaint()
                     Archivo = False 
@@ -265,7 +263,6 @@ class Ui_MainWindow(object):
                     fp.write("\n")
                     [fp.write('CH%d ;'%i)for i in range(1,9)]
                     fp.write("\n")
-                    print("Archivo Creado EMG")
                     Archivo = False
         
 
@@ -323,7 +320,6 @@ class Ui_MainWindow(object):
         sos = self.butter_bandpass(lowcut, highcut, fs, order=order)
         y = sosfilt(sos, data)
         return y
-
     def filtros(self):
         global LowF, HighF, Cfiltro
         if Cfiltro==0:
@@ -402,21 +398,24 @@ class Ui_MainWindow(object):
         else:
             if self.hub._running == False:
                 contar_error=0
-                with self.hub.run_in_background(self.listener.on_event): 
-                    emg_data = self.listener.get_emg_data()
-                    emg_data = np.array([x[1] for x in emg_data]).T
-                    print("/r")
-                    #time.sleep(0.00001)
-
-                    for g, data in zip(range(8), emg_data):
-                        if len(data) < 512:
-                            data = np.concatenate([np.zeros(512 - len(data)), data])  
-                        self.ts_plots_emg[g].clear()    
-                        self.ts_plots_emg[g].plot(pen=colors[g]).setData(emg_data[g])
+                
             else:
                 contar_error +=1
-                if contar_error == 20:
+                if contar_error == 5:
                     self.Errores("MYO DESCONECTADA")
+                    
+            
+            with self.hub.run_in_background(self.listener.on_event): 
+                emg_data = self.listener.get_emg_data()
+                emg_data = np.array([x[1] for x in emg_data]).T
+                time.sleep(0.00001)
+
+                for g, data in zip(range(8), emg_data):
+                    if len(data) < 512:
+                        data = np.concatenate([np.zeros(512 - len(data)), data])  
+                    self.ts_plots_emg[g].clear()    
+                    self.ts_plots_emg[g].plot(pen=colors[g]).setData(emg_data[g]) 
+            
 
 
                
@@ -458,7 +457,6 @@ class Ui_MainWindow(object):
     def inittimer(self):
         global inittimer, prueba
         if not self.textEdit.toPlainText():
-            print("El QLineEdit esta vacio")
             msg = QMessageBox()
             msg.setWindowTitle("Control")
             msg.setText("Atención!")
@@ -519,7 +517,6 @@ class Ui_MainWindow(object):
             
             
         else:
-            print("Termino Timer")
             self.hiloRunTimmer.do_run = False
             inittimer = False
             self.stopsaved= True
@@ -621,11 +618,11 @@ if __name__ == "__main__":
         ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
-        #hilo_conexion_ultracortes.start()
+        hilo_conexion_ultracortes.start()
         time.sleep(3)
         timerEEG = QtCore.QTimer()
-        #timerEEG.timeout.connect(ui.updater_EEG)
-        #timerEEG.start(60)
+        timerEEG.timeout.connect(ui.updater_EEG)
+        timerEEG.start(60)
         timerEMG = QtCore.QTimer()
         timerEMG.timeout.connect(ui.updater_EMG)
         timerEMG.start(50)
