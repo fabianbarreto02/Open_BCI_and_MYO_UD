@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.close_application)
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(20, 530, 131, 41))
+        self.pushButton_2.setGeometry(QtCore.QRect(20, 580, 131, 41))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.inittimer)
         self.pushButton_2.setEnabled(False)
@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
         self.pushButton_6.clicked.connect(self.crear_paciente)
 
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber.setGeometry(QtCore.QRect(30, 260, 111, 61))
+        self.lcdNumber.setGeometry(QtCore.QRect(30, 330, 111, 61))
         self.lcdNumber.setSmallDecimalPoint(True)
         self.lcdNumber.setDigitCount(4)
         self.lcdNumber.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -100,7 +100,7 @@ class Ui_MainWindow(object):
 
 
         self.lcdNumber1 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber1.setGeometry(QtCore.QRect(130,223,32,25))
+        self.lcdNumber1.setGeometry(QtCore.QRect(130,293,32,25))
         self.lcdNumber1.setSmallDecimalPoint(True)
         self.lcdNumber1.setDigitCount(2)
         self.lcdNumber1.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -128,12 +128,12 @@ class Ui_MainWindow(object):
 
 
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(20, 619, 131, 41))
+        self.pushButton_4.setGeometry(QtCore.QRect(10, 220, 141, 41))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(self.filtros)
 
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(20, 575, 131, 41))
+        self.pushButton_5.setGeometry(QtCore.QRect(20, 620, 131, 41))
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_5.setEnabled(False)
         self.pushButton_5.clicked.connect(self.plot_final)
@@ -152,14 +152,14 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
 
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(10, 360, 131, 151))
+        self.label_5.setGeometry(QtCore.QRect(10, 430, 131, 151))
         self.label_5.setObjectName("label_5")
         self.movie = QMovie('manos.gif')
         self.label_5.setMovie(self.movie)
         self.movie.start()
 
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(40, 320, 81, 41))
+        self.label_6.setGeometry(QtCore.QRect(40, 400, 81, 41))
         self.label_6.setObjectName("label_6")
 
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
@@ -167,7 +167,7 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName("label_7")
         
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(15,225,141,20))
+        self.label_8.setGeometry(QtCore.QRect(15,295,141,20))
         self.label_8.setObjectName("label_8")
         
         self.label_9 = QtWidgets.QLabel(self.centralwidget)
@@ -198,8 +198,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "INICIO"))
         self.pushButton_3.setText(_translate("MainWindow", "INICIAR SESIÓN"))
         self.label.setText(_translate("MainWindow", "SEGUNDOS"))
-        self.pushButton_4.setText(_translate("MainWindow", "No Filter"))
-        self.pushButton_5.setText(_translate("MainWindow", "PLOT"))
+        self.pushButton_4.setText(_translate("MainWindow", "SIN FILTRO"))
+        self.pushButton_5.setText(_translate("MainWindow", "GRAFICAR"))
         self.pushButton_6.setText(_translate("MainWindow", "CREAR PACIENTE"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">EEG 8 Canales</p></body></html>"))
@@ -294,8 +294,11 @@ class Ui_MainWindow(object):
 
     def save_csv_eeg(self):
         global prueba, fila, data, c, carpetaEEG
-
-        time.sleep(1)
+        self.pushButton_3.setText("GUARDANDO")
+        self.pushButton_3.setEnabled(False)
+        time.sleep(1.5)
+        self.pushButton_3.setText("INICIAR SESIÓN")
+        self.pushButton_3.setEnabled(True)
         dataG = data
         dataG = np.array(dataG).T
         dataG = self.butter_bandpass_filter(dataG, 8, 13, 125, order=5)
@@ -325,7 +328,7 @@ class Ui_MainWindow(object):
         if Cfiltro==0:
             LowF = 0
             HighF =0
-            self.pushButton_4.setText("No Filter")
+            self.pushButton_4.setText("SIN FILTRO")
         elif  Cfiltro==1:
             LowF = 8
             HighF =13
@@ -615,7 +618,7 @@ if __name__ == "__main__":
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
-        ui.conexionMYO()
+        # ui.conexionMYO()
         hilo_conexion_ultracortes = threading.Thread(target=start_board_Ultracortex) 
         hilo_conexion_ultracortes.daemon = True
         hilo_conexion_ultracortes.start()
@@ -623,7 +626,7 @@ if __name__ == "__main__":
         timerEEG = QtCore.QTimer()
         timerEEG.timeout.connect(ui.updater_EEG)
         timerEEG.start(60)
-        timerEMG = QtCore.QTimer()
-        timerEMG.timeout.connect(ui.updater_EMG)
-        timerEMG.start(50)
+        # timerEMG = QtCore.QTimer()
+        # timerEMG.timeout.connect(ui.updater_EMG)
+        # timerEMG.start(50)
         sys.exit(app.exec_())
