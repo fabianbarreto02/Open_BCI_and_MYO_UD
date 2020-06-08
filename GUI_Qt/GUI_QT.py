@@ -411,11 +411,7 @@ class Ui_MainWindow(object):
                 print("Stopping as you wish.")
             self.hiloBiocina = threading.Thread(target=hiloBiocina,args=("RUN_Bocina",))
 
-   
-            
-
-
-    
+       
     def OnTimer(self, event, e):
         global i , inittimer, fila, prueba
         global c , s
@@ -473,7 +469,7 @@ class Ui_MainWindow(object):
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "COM8", daisy= True)
+    board = OpenBCICyton( "COM3", daisy= True)
     board.start_stream(ui.save_data_EEG)
 
 
