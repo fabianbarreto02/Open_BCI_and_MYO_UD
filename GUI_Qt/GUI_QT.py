@@ -469,7 +469,7 @@ class Ui_MainWindow(object):
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "COM3", daisy= True)
+    board = OpenBCICyton( "COM8", daisy= True)
     board.start_stream(ui.save_data_EEG)
 
 
