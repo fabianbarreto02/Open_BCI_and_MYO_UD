@@ -212,7 +212,7 @@ class Ui_MainWindow(object):
 ##############################################################################################################################
     def crear_paciente(self):
 
-        subprocess.Popen("python GUI_DATOS.py", shell=True)
+        subprocess.Popen("python3 GUI_DATOS.py", shell=True)
         self.pushButton_3.setEnabled(True)
 
     
@@ -469,7 +469,7 @@ class Ui_MainWindow(object):
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "COM8", daisy= True)
+    board = OpenBCICyton( "/dev/cu.usbserial-DM01N64L", daisy= True)
     board.start_stream(ui.save_data_EEG)
 
 
