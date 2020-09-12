@@ -1,0 +1,10 @@
+Número de identificación del estudio: 016
+Género del paciente: Femenino
+Edad del paciente: 50
+Altura del paciente (cm): 155
+Peso (Kg) del paciente: 70
+BMI del paciente: 29.1363163371488
+Ubicación del brazalete en el paciente: Derecho
+Paciente con condición de discapacidad: No
+Frecuencia de muestreo de la MYO: 200 (Hz)
+Frecuencia de muestreo del Ultracortex (Cyton + Daisy): 125 (Hz)
