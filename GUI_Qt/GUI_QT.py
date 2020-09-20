@@ -54,7 +54,7 @@ class Ui_MainWindow(object):
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1339, 721)
+        MainWindow.resize(1420, 721)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("LOGOLASER.jpg"), QtGui.QIcon.Selected, QtGui.QIcon.On)
         MainWindow.setWindowIcon(icon)
@@ -63,7 +63,7 @@ class Ui_MainWindow(object):
 
         # Plot primeros 8 canales EEG
         self.graphicsView = GraphicsLayoutWidget(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(180, 10, 371, 651))
+        self.graphicsView.setGeometry(QtCore.QRect(210, 10, 371, 651))
         self.graphicsView.setObjectName("graphicsView")
         self.ts_plots = [self.graphicsView.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(1,9)]
 
@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
 
 
         self.lcdNumber1 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber1.setGeometry(QtCore.QRect(130,223,32,25))
+        self.lcdNumber1.setGeometry(QtCore.QRect(162,223,32,25))
         self.lcdNumber1.setSmallDecimalPoint(True)
         self.lcdNumber1.setDigitCount(2)
         self.lcdNumber1.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
@@ -114,12 +114,12 @@ class Ui_MainWindow(object):
         self.textEdit.setObjectName("textEdit")
 
         self.graphicsView_2 = GraphicsLayoutWidget(self.centralwidget)
-        self.graphicsView_2.setGeometry(QtCore.QRect(570, 10, 371, 651))
+        self.graphicsView_2.setGeometry(QtCore.QRect(600, 10, 371, 651))
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.ts_plots_2 = [self.graphicsView_2.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'uV'}) for i in range(9,17)]
 
         self.graphicsView_3 = GraphicsLayoutWidget(self.centralwidget)
-        self.graphicsView_3.setGeometry(QtCore.QRect(950, 10, 371, 651))
+        self.graphicsView_3.setGeometry(QtCore.QRect(990, 10, 371, 651))
         self.graphicsView_3.setObjectName("graphicsView_3")
         self.ts_plots_emg = [self.graphicsView_3.addPlot(row=i, col=0, colspan=2, title='Channel %d' % i, labels={'left': 'mV'}) for i in range(1,9)]
 
@@ -159,7 +159,7 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
 
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(10,100,141,20))
+        self.label_7.setGeometry(QtCore.QRect(10,100,164,20))
         self.label_7.setObjectName("label_7")
         
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
@@ -212,7 +212,7 @@ class Ui_MainWindow(object):
 ##############################################################################################################################
     def crear_paciente(self):
 
-        subprocess.Popen("python3 GUI_DATOS.py", shell=True)
+        subprocess.Popen("python GUI_DATOS.py", shell=True)
         self.pushButton_3.setEnabled(True)
 
     
@@ -469,7 +469,7 @@ class Ui_MainWindow(object):
 
 # Metodo Arranque Ultracortex
 def start_board_Ultracortex():
-    board = OpenBCICyton( "/dev/cu.usbserial-DM01N64L", daisy= True)
+    board = OpenBCICyton( "COM8", daisy= True)
     board.start_stream(ui.save_data_EEG)
 
 
