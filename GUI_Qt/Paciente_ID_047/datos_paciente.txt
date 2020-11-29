@@ -1,0 +1,10 @@
+Número de identificación del estudio: 047
+Género del paciente: Masculino
+Edad del paciente: 26
+Altura del paciente (cm): 167
+Peso (Kg) del paciente: 80
+BMI del paciente: 28.685144680698485
+Ubicación del brazalete en el paciente: Izquierdo
+Paciente con condición de discapacidad: No
+Frecuencia de muestreo de la MYO: 200 (Hz)
+Frecuencia de muestreo del Ultracortex (Cyton + Daisy): 125 (Hz)
