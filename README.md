@@ -126,7 +126,7 @@ Dependencias adicionales(se sugiere usar el gestor de paquete PIP):
 | <a href="https://github.com/fabianbarreto02" target="_blank">**Fabian Barreto**</a> | <a href="https://github.com/cperdomo" target="_blank">**Cesar Perdomo**</a> | <a href="https://github.com/CristianDavidSanchez" target="_blank">**Cristian Sanchez**</a> | <a href="https://github.com/NRDaza" target="_blank">**Nicolas Daza**</a> |
 | :---: |:---:| :---:| :---:|
 | [![Fabian](https://avatars3.githubusercontent.com/u/43799065?s=200&u=4f2296f15ee5517409891d91a2e774b9c1a183fa&v=4)](https://github.com/fabianbarreto02)   | [![Cesar](https://avatars.githubusercontent.com/u/17862195?v=4)](https://github.com/cperdomo)    | [![Cristian](https://avatars2.githubusercontent.com/u/45292213?s=200&u=f4851b78acbb0db7c5ba203982dfe71d2f1b785e&v=4)](https://github.com/CristianDavidSanchez) | [![Nicolas](https://avatars2.githubusercontent.com/u/34488581?s=200&u=f02bdb311d05b487e40fbe8dc712024596af956a&v=4)](https://github.com/NRDaza)  |
-| <a href="https://github.com/fabianbarreto02" target="_blank">`github.com/fabianbarreto02`</a>| <a href="https://github.com/cperdom" target="_blank">`github.com/cperdom`</a> | <a href="https://github.com/CristianDavidSanchez" target="_blank">`github.com/CristianDavidSanchez`</a> | <a href="https://github.com/NRDaza" target="_blank">`github.com/NRDaza`</a> |
+| <a href="https://github.com/fabianbarreto02" target="_blank">`github.com/fabianbarreto02`</a>| <a href="https://github.com/cperdomo" target="_blank">`github.com/cperdom`</a> | <a href="https://github.com/CristianDavidSanchez" target="_blank">`github.com/CristianDavidSanchez`</a> | <a href="https://github.com/NRDaza" target="_blank">`github.com/NRDaza`</a> |
 
 </center>
 
